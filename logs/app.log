@@ -1,0 +1,92 @@
+2025-11-27 15:01:38 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-27 15:01:38 [INFO    ] [setting.py:42] LLM_URL: https://api.deepseek.com
+2025-11-27 15:01:54 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-27 15:01:54 [INFO    ] [setting.py:42] LLM_URL: https://api.deepseek.com
+2025-11-27 15:01:57 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-27 15:01:57 [INFO    ] [setting.py:42] LLM_URL: https://api.deepseek.com
+2025-11-27 15:01:58 [INFO    ] [journey_poster.py:25] Journey Poster 服务正在启动...
+2025-11-27 15:01:58 [INFO    ] [journey_poster.py:28] Journey Poster 服务启动 - 环境: dev
+2025-11-27 15:01:58 [INFO    ] [journey_poster.py:31] LLM_URL: https://api.deepseek.com
+2025-11-27 15:01:58 [INFO    ] [journey_poster.py:32] LLM_API_KEY: 已配置
+2025-11-27 15:01:58 [INFO    ] [journey_poster.py:33] LLM_SCENE_ID: None
+2025-11-27 15:01:58 [INFO    ] [journey_poster.py:37] 火山豆包初始化成功
+2025-11-27 15:01:58 [INFO    ] [journey_poster.py:41] Journey Poster 服务启动完成
+2025-11-27 15:01:58 [INFO    ] [main.py:308] 159 changes detected
+2025-11-27 15:01:59 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:01:59 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:01:59 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:00 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:00 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:00 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:01 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:01 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:02 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:02 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:02 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:03 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:03 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:03 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:04 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:04 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:05 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:05 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:05 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:06 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:06 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:07 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:07 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:07 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:08 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:08 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:09 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:09 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:09 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:10 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:10 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:10 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:11 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:11 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:12 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:12 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:12 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:13 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:13 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:13 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:14 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:14 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:15 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:15 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:15 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:16 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:16 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:17 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:17 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:17 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:18 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:18 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:19 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:19 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:19 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:20 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:20 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:20 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:21 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:21 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:22 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:22 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:22 [INFO    ] [main.py:308] 1 change detected
+2025-11-27 15:02:23 [INFO    ] [journey_poster.py:48] Journey Poster 服务正在关闭
+2025-11-27 15:02:23 [INFO    ] [journey_poster.py:52] 清理服务资源
+2025-11-27 15:02:23 [INFO    ] [journey_poster.py:56] Journey Poster 服务关闭完成
+2025-11-27 15:04:31 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-27 15:04:31 [INFO    ] [setting.py:42] LLM_URL: https://api.deepseek.com
+2025-11-27 15:04:32 [INFO    ] [journey_poster.py:25] Journey Poster 服务正在启动...
+2025-11-27 15:04:32 [INFO    ] [journey_poster.py:28] Journey Poster 服务启动 - 环境: dev
+2025-11-27 15:04:32 [INFO    ] [journey_poster.py:31] LLM_URL: https://api.deepseek.com
+2025-11-27 15:04:32 [INFO    ] [journey_poster.py:32] LLM_API_KEY: 已配置
+2025-11-27 15:04:32 [INFO    ] [journey_poster.py:33] LLM_SCENE_ID: None
+2025-11-27 15:04:32 [INFO    ] [journey_poster.py:37] 火山豆包初始化成功
+2025-11-27 15:04:32 [INFO    ] [journey_poster.py:41] Journey Poster 服务启动完成
+2025-11-27 15:06:25 [INFO    ] [journey_poster.py:48] Journey Poster 服务正在关闭
+2025-11-27 15:06:25 [INFO    ] [journey_poster.py:52] 清理服务资源
+2025-11-27 15:06:25 [INFO    ] [journey_poster.py:56] Journey Poster 服务关闭完成

@@ -8,7 +8,9 @@ from typing import Optional, List
 from openai import AsyncOpenAI
 from pydantic import BaseModel
 from volcenginesdkarkruntime import Ark
-from utils.image_utils import prepare_image_list_for_api 
+from volcenginesdkarkruntime.types.images.images import SequentialImageGenerationOptions
+from utils.image_utils import prepare_image_list_for_api
+from setting import settings 
 
 
 logger = logging.getLogger(__name__)
@@ -175,10 +177,35 @@ class LLMModel:
             # 准备图片输入（单图返回字符串，多图返回列表）
             prepared_images = prepare_image_list_for_api(InputImageList)
             
-            client = Ark(
-                base_url=os.getenv('LLM_BASE_URL'), 
-                api_key=os.getenv('LLM_API_KEY'), 
-            ) 
+            # 使用 settings 配置，如果没有则从环境变量读取（兼容测试文件）
+            base_url = settings.LLM_URL or os.getenv('LLM_URL')
+            api_key = settings.LLM_API_KEY or os.getenv('LLM_API_KEY')
+            
+            if not base_url or not api_key:
+                error_msg = "LLM_URL 和 LLM_API_KEY 必须配置"
+                logger.error(error_msg)
+                logger.error(f"当前 LLM_URL: {base_url}, LLM_API_KEY: {'已配置' if api_key else '未配置'}")
+                raise ValueError(error_msg)
+            
+            # 验证 Base URL 格式
+            if 'api.deepseek.com' in base_url:
+                logger.warning(f"⚠️  检测到 DeepSeek URL，豆包 API 应该是: https://ark.{{region}}.volces.com/api/v3")
+            
+            logger.info(f"调用豆包生图接口")
+            logger.info(f"  Base URL: {base_url}")
+            logger.info(f"  API Key: {'已配置 (长度: ' + str(len(api_key)) + ')' if api_key else '未配置'}")
+            
+            # 创建 Ark 客户端，添加超时配置
+            try:
+                client = Ark(
+                    base_url=base_url, 
+                    api_key=api_key,
+                    timeout=120.0,  # 图片生成可能需要较长时间
+                )
+                logger.info("✓ Ark 客户端创建成功")
+            except Exception as e:
+                logger.error(f"✗ 创建 Ark 客户端失败: {e}")
+                raise 
         
             # 使用 b64_json 格式接收 Base64 数据
             stream = client.images.generate( 
@@ -252,8 +279,27 @@ class LLMModel:
             return images_base64_list
             
         except Exception as e:
-            logger.error(f"调用豆包生图接口失败: {e}")
-            raise Exception(f"调用豆包生图接口失败: {e}")
+            error_type = type(e).__name__
+            error_msg = str(e)
+            logger.error(f"调用豆包生图接口失败")
+            logger.error(f"  错误类型: {error_type}")
+            logger.error(f"  错误信息: {error_msg}")
+            
+            # 提供更详细的错误诊断
+            if "Connection" in error_type or "connection" in error_msg.lower():
+                logger.error("  诊断: 连接错误，可能原因：")
+                logger.error("    1. Base URL 配置错误（应该是 https://ark.{region}.volces.com/api/v3）")
+                logger.error("    2. 网络不通或需要代理")
+                logger.error("    3. API Key 无效")
+                logger.error("    4. 防火墙阻止")
+            elif "401" in error_msg or "Unauthorized" in error_msg:
+                logger.error("  诊断: 认证失败，请检查 API Key 是否正确")
+            elif "403" in error_msg or "Forbidden" in error_msg:
+                logger.error("  诊断: 权限不足，请检查 API Key 是否有调用权限")
+            elif "timeout" in error_msg.lower():
+                logger.error("  诊断: 请求超时，可能需要增加超时时间或检查网络")
+            
+            raise Exception(f"调用豆包生图接口失败: {error_type}: {error_msg}")
             
 
     async def close(self):

@@ -9,11 +9,13 @@ from contextlib import asynccontextmanager
 import logging
 from datetime import datetime
 import uvicorn
+import asyncio
 from setting import settings, ENV
 from core.llm import LLMModel
 from dto.createPictureReqDto import CreatePictureReqDto
 from dto.createPictureRespDto import CreatePictureRespDto
 from core.generation_Image import doubao_images
+from core.exceptions import CommonException
 
 # 初始化日志
 logger = logging.getLogger(__name__)
@@ -92,15 +94,7 @@ async def process_response(data: Dict[str, Any], status: int = 200, success: boo
         }
     )
 
-# 自定义异常类
-class CommonException(Exception):
-    def __init__(self, success: bool = False, status: int = http_status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                 message: str = "服务器内部错误", data: Any = None):
-        self.success = success
-        self.status = status
-        self.message = message
-        self.data = data
-        super().__init__(self.message)
+# CommonException 已移至 core.exceptions 模块，避免循环导入
 
 # CORS 中间件配置
 app.add_middleware(
@@ -179,22 +173,35 @@ async def health_check():
     return await process_response(data, message="healthy")
 
 @app.post("/createPicture", tags=["图生图接口"])
-async def create_picture( CreatePictureReqDto: CreatePictureReqDto)->CreatePictureRespDto:
+async def create_picture(createPictureReqDto: CreatePictureReqDto) -> CreatePictureRespDto:
     """
     图片生图接口
-    input:
+    
+    基于用户上传的原图和选择的参数，生成4张不同场景的图片。
+    
+    **参数说明：**
+    - `originPicBase64`: 用户上传的原图，Base64编码格式（data:image/jpeg;base64,... 或 data:image/png;base64,...）
+    - `city`: 城市枚举值（0-19，如0=东京、1=巴黎等）
+    - `sex`: 性别（0=男、1=女）
+    - `mode`: 模式（0=轻松模式、1=大师模式）
+    - `clothes`: 轻松模式下必填，包含服装配置
+    - `master_mode_tags`: 大师模式下必填，包含风格、材质、色调等标签
+    
+    **返回：**
+    - 成功时返回4张生成的图片（Base64编码列表）
+    - 失败时返回错误信息
     """
     try:
         retry_times = 0
         # 调用图生图方法
-        return await doubao_images().createPicture(CreatePictureReqDto)
+        return await doubao_images().createPicture(createPictureReqDto)
 
     except Exception as e:
         logger.error(f"图生图接口异常,重新尝试{retry_times}次: {e}")
         retry_times += 1
         await asyncio.sleep(1)
         # 重新尝试调用 生图方法
-        if retry_times < 1:
+        if retry_times > 1:
             raise CommonException(message="图生图接口异常")
         
         
@@ -215,3 +222,4 @@ if __name__ == "__main__":
         reload=False,  # 开发模式下启用热重载
         log_level="info"
     )
+# uv run python journey_poster.py

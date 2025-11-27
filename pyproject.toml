@@ -11,8 +11,9 @@ dependencies = [
     "python-dotenv>=1.2.1",
     "uvicorn[standard]>=0.38.0",
     "volcengine-python-sdk[ark]>=4.0.35",
+    "pillow>=10.0.0",
 ]
 
 [[tool.uv.index]]
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+url = "https://pypi.org/simple"
 default = true

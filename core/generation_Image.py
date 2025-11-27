@@ -4,7 +4,7 @@ from core.llm import LLMModel
 from dto.createPictureReqDto import CreatePictureReqDto
 from dto.createPictureRespDto import CreatePictureRespDto
 from core.enum import CityEnum, ModeEnum, SexEnum
-from journey_poster import CommonException
+from core.exceptions import CommonException
 from core.prompt_strategy import generate_prompt_by_request
 from utils.image_utils import validate_image_format, validate_image_constraints
 

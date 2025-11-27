@@ -57,7 +57,7 @@ class Clothes(BaseModel):
     style_file_name 对应 utils/pictures 目录下的文件名
     """
     items: List[ClothesItem] = Field(
-        required=True, 
+        ..., 
         min_length=1,
         max_length=3,
         description="服装列表，可包含上装、下装或连衣裙"
@@ -120,23 +120,23 @@ class CreatePictureReqDto(BaseModel):
     """
     
     originPicBase64: str = Field(
-        required=True, 
+        ..., 
         description="用户输入的原图Base64编码。格式：data:image/<format>;base64,<base64_data>，仅支持 jpeg、png 格式"
     )
     
     city: CityEnum = Field(
-        required=True, 
+        ..., 
         description="城市名称",
         examples=["巴黎", "东京", "纽约"]
     )
     
     sex: SexEnum = Field(
-        required=True, 
+        ..., 
         description="性别：0-男、1-女"
     )
     
     mode: ModeEnum = Field(
-        required=True, 
+        ..., 
         description="模式：0-轻松模式、1-大师模式"
     )
     

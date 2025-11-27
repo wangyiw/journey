@@ -90,3 +90,289 @@
 2025-11-27 15:06:25 [INFO    ] [journey_poster.py:48] Journey Poster 服务正在关闭
 2025-11-27 15:06:25 [INFO    ] [journey_poster.py:52] 清理服务资源
 2025-11-27 15:06:25 [INFO    ] [journey_poster.py:56] Journey Poster 服务关闭完成
+2025-11-28 02:43:25 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 02:43:25 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 02:48:26 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 02:48:26 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 02:52:08 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 02:52:08 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 02:55:04 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 02:55:04 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 02:55:05 [INFO    ] [journey_poster.py:30] Journey Poster 服务正在启动...
+2025-11-28 02:55:05 [INFO    ] [journey_poster.py:33] Journey Poster 服务启动 - 环境: dev
+2025-11-28 02:55:05 [INFO    ] [journey_poster.py:36] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 02:55:05 [INFO    ] [journey_poster.py:37] LLM_API_KEY: 已配置
+2025-11-28 02:55:05 [INFO    ] [journey_poster.py:38] LLM_SCENE_ID: ep-m-20251127211119-7fbfh
+2025-11-28 02:55:05 [INFO    ] [journey_poster.py:42] 火山豆包初始化成功
+2025-11-28 02:55:05 [INFO    ] [journey_poster.py:46] Journey Poster 服务启动完成
+2025-11-28 03:11:06 [ERROR   ] [journey_poster.py:155] 请求异常: ValidationError: 21 validation errors for OpenAPI
+components.schemas.Clothes.Schema.properties.items.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.Clothes.Schema.properties.items.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '服装...Items', 'type': 'array'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.Clothes.Reference.$ref
+  Field required [type=missing, input_value={'description': '服装...thes', 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+components.schemas.CreatePictureReqDto.Schema.properties.originPicBase64.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.originPicBase64.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '用户...se64', 'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Schema.properties.city.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.city.bool
+  Input should be a valid boolean [type=bool_type, input_value={'$ref': '#/components/sc...约'], 'required': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Schema.properties.sex.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.sex.bool
+  Input should be a valid boolean [type=bool_type, input_value={'$ref': '#/components/sc...-女', 'required': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Schema.properties.mode.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.mode.bool
+  Input should be a valid boolean [type=bool_type, input_value={'$ref': '#/components/sc...式', 'required': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Reference.$ref
+  Field required [type=missing, input_value={'description': '图片...qDto', 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+components.schemas.CreatePictureRespDto.Schema.properties.task_id.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.task_id.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '任务ID...k Id', 'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Schema.properties.images.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.images.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '生成...mages', 'type': 'array'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Schema.properties.city.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.city.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '生成...City', 'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Schema.properties.mode.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.mode.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '使用...ode', 'type': 'integer'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Reference.$ref
+  Field required [type=missing, input_value={'description': '图片...pDto', 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2025-11-28 03:11:06 [ERROR   ] [journey_poster.py:155] 请求异常: ValidationError: 21 validation errors for OpenAPI
+components.schemas.Clothes.Schema.properties.items.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.Clothes.Schema.properties.items.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '服装...Items', 'type': 'array'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.Clothes.Reference.$ref
+  Field required [type=missing, input_value={'description': '服装...thes', 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+components.schemas.CreatePictureReqDto.Schema.properties.originPicBase64.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.originPicBase64.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '用户...se64', 'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Schema.properties.city.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.city.bool
+  Input should be a valid boolean [type=bool_type, input_value={'$ref': '#/components/sc...约'], 'required': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Schema.properties.sex.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.sex.bool
+  Input should be a valid boolean [type=bool_type, input_value={'$ref': '#/components/sc...-女', 'required': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Schema.properties.mode.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.mode.bool
+  Input should be a valid boolean [type=bool_type, input_value={'$ref': '#/components/sc...式', 'required': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Reference.$ref
+  Field required [type=missing, input_value={'description': '图片...qDto', 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+components.schemas.CreatePictureRespDto.Schema.properties.task_id.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.task_id.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '任务ID...k Id', 'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Schema.properties.images.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.images.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '生成...mages', 'type': 'array'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Schema.properties.city.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.city.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '生成...City', 'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Schema.properties.mode.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.mode.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '使用...ode', 'type': 'integer'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Reference.$ref
+  Field required [type=missing, input_value={'description': '图片...pDto', 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2025-11-28 03:12:54 [ERROR   ] [journey_poster.py:155] 请求异常: ValidationError: 21 validation errors for OpenAPI
+components.schemas.Clothes.Schema.properties.items.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.Clothes.Schema.properties.items.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '服装...Items', 'type': 'array'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.Clothes.Reference.$ref
+  Field required [type=missing, input_value={'description': '服装...thes', 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+components.schemas.CreatePictureReqDto.Schema.properties.originPicBase64.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.originPicBase64.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '用户...se64', 'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Schema.properties.city.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.city.bool
+  Input should be a valid boolean [type=bool_type, input_value={'$ref': '#/components/sc...约'], 'required': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Schema.properties.sex.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.sex.bool
+  Input should be a valid boolean [type=bool_type, input_value={'$ref': '#/components/sc...-女', 'required': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Schema.properties.mode.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.mode.bool
+  Input should be a valid boolean [type=bool_type, input_value={'$ref': '#/components/sc...式', 'required': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Reference.$ref
+  Field required [type=missing, input_value={'description': '图片...qDto', 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+components.schemas.CreatePictureRespDto.Schema.properties.task_id.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.task_id.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '任务ID...k Id', 'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Schema.properties.images.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.images.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '生成...mages', 'type': 'array'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Schema.properties.city.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.city.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '生成...City', 'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Schema.properties.mode.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.mode.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '使用...ode', 'type': 'integer'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Reference.$ref
+  Field required [type=missing, input_value={'description': '图片...pDto', 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2025-11-28 03:12:54 [ERROR   ] [journey_poster.py:155] 请求异常: ValidationError: 21 validation errors for OpenAPI
+components.schemas.Clothes.Schema.properties.items.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.Clothes.Schema.properties.items.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '服装...Items', 'type': 'array'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.Clothes.Reference.$ref
+  Field required [type=missing, input_value={'description': '服装...thes', 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+components.schemas.CreatePictureReqDto.Schema.properties.originPicBase64.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.originPicBase64.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '用户...se64', 'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Schema.properties.city.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.city.bool
+  Input should be a valid boolean [type=bool_type, input_value={'$ref': '#/components/sc...约'], 'required': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Schema.properties.sex.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.sex.bool
+  Input should be a valid boolean [type=bool_type, input_value={'$ref': '#/components/sc...-女', 'required': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Schema.properties.mode.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureReqDto.Schema.properties.mode.bool
+  Input should be a valid boolean [type=bool_type, input_value={'$ref': '#/components/sc...式', 'required': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureReqDto.Reference.$ref
+  Field required [type=missing, input_value={'description': '图片...qDto', 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+components.schemas.CreatePictureRespDto.Schema.properties.task_id.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.task_id.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '任务ID...k Id', 'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Schema.properties.images.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.images.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '生成...mages', 'type': 'array'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Schema.properties.city.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.city.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '生成...City', 'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Schema.properties.mode.Schema.required
+  Input should be a valid list [type=list_type, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+components.schemas.CreatePictureRespDto.Schema.properties.mode.bool
+  Input should be a valid boolean [type=bool_type, input_value={'description': '使用...ode', 'type': 'integer'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/bool_type
+components.schemas.CreatePictureRespDto.Reference.$ref
+  Field required [type=missing, input_value={'description': '图片...pDto', 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2025-11-28 03:12:58 [INFO    ] [journey_poster.py:53] Journey Poster 服务正在关闭
+2025-11-28 03:12:58 [INFO    ] [journey_poster.py:57] 清理服务资源
+2025-11-28 03:12:58 [INFO    ] [journey_poster.py:61] Journey Poster 服务关闭完成
+2025-11-28 03:12:59 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 03:12:59 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 03:13:00 [INFO    ] [journey_poster.py:30] Journey Poster 服务正在启动...
+2025-11-28 03:13:00 [INFO    ] [journey_poster.py:33] Journey Poster 服务启动 - 环境: dev
+2025-11-28 03:13:00 [INFO    ] [journey_poster.py:36] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 03:13:00 [INFO    ] [journey_poster.py:37] LLM_API_KEY: 已配置
+2025-11-28 03:13:00 [INFO    ] [journey_poster.py:38] LLM_SCENE_ID: ep-m-20251127211119-7fbfh
+2025-11-28 03:13:00 [INFO    ] [journey_poster.py:42] 火山豆包初始化成功
+2025-11-28 03:13:00 [INFO    ] [journey_poster.py:46] Journey Poster 服务启动完成
+2025-11-28 03:13:21 [INFO    ] [journey_poster.py:53] Journey Poster 服务正在关闭
+2025-11-28 03:13:21 [INFO    ] [journey_poster.py:57] 清理服务资源
+2025-11-28 03:13:21 [INFO    ] [journey_poster.py:61] Journey Poster 服务关闭完成

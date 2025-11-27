@@ -13,6 +13,4 @@ dependencies = [
     "volcengine-python-sdk[ark]>=4.0.35",
 ]
 
-[[tool.uv.index]]
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-default = true
+

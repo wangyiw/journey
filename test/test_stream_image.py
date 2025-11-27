@@ -68,7 +68,7 @@ async def test_stream_image_generation():
     print("=" * 60)
     
     # 1. 加载测试图片
-    image_path = r"d:\DidaCode\journeyposter\utils\pictures\input_demo.jpeg"
+    image_path = r"d:\didaCode\journey\utils\pictures\input_demo.jpeg"
     print(f"\n1. 加载测试图片: {image_path}")
     
     try:
@@ -114,7 +114,7 @@ async def test_stream_image_generation():
         
         # 5. 保存生成的图片（可选）
         print("\n5. 保存生成的图片")
-        output_dir = Path(r"d:\DidaCode\journeyposter\utils\pictures\output")
+        output_dir = Path(r"d:\didaCode\journey\utils\pictures\output")
         output_dir.mkdir(exist_ok=True)
         
         for i, img_base64 in enumerate(result_images, 1):

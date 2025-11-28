@@ -1,17 +1,21 @@
 """
-简单测试流式图片生成功能（固定 prompt 和 image）
+简单测试流式图片生成功能
+使用 LLMModel.createPictureBySeedReam 方法
 """
 import asyncio
 import base64
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import sys
+
+# 添加项目根目录到路径
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # 加载环境变量
 load_dotenv('.env.dev')
 
-from volcenginesdkarkruntime import Ark
-from volcenginesdkarkruntime.types.images.images import SequentialImageGenerationOptions
+from core.llm import LLMModel, LLMConf
 
 
 def load_image_as_base64(image_path: str) -> str:
@@ -60,135 +64,30 @@ async def test_simple():
         print(f"   图片加载失败: {e}")
         return
     
-    # 3. 调用豆包 API
-    print("3. 调用豆包生图 API")
+    # 3. 调用 LLMModel 的 createPictureBySeedReam 方法
+    print("3. 调用 LLMModel.createPictureBySeedReam 方法")
     print(f"   - Base URL: {os.getenv('LLM_URL')}")
     print(f"   - API Key: {'已设置' if os.getenv('LLM_API_KEY') else '未设置'}")
-    print(f"   - 模型: doubao-seedream-4-0-250828")
+    print(f"   - Model ID: {os.getenv('LLM_SCENE_ID')}")
     print(f"   - 生成数量: 4 张")
     print(f"   - 响应格式: b64_json")
     print(f"   - 流式: True\n")
-
-    MODEL_ENDPOINT_ID = "ep-m-20251127211119-7fbfh"
     
     try:
-        client = Ark(
-            base_url=os.getenv('LLM_URL'),
-            api_key=os.getenv('LLM_API_KEY'),
+        # 创建 LLMModel 实例（使用空配置，从环境变量读取）
+        llm_conf = LLMConf()
+        llm_model = LLMModel(llm_conf)
+        
+        # 调用生图方法
+        print("4. 调用生图接口...")
+        images_base64_list = await llm_model.createPictureBySeedReam(
+            InputImageList=[image_base64],
+            prompt=test_prompt
         )
         
-        # 流式生成
-        stream = client.images.generate(
-            model=MODEL_ENDPOINT_ID,
-            prompt=test_prompt,
-            image=image_base64,  # 单图输入
-            size="2K",
-            sequential_image_generation="auto",
-            sequential_image_generation_options=SequentialImageGenerationOptions(max_images=4),
-            response_format="b64_json",
-            stream=True,
-            watermark=False
-        )
+        print(f"\n✓ 生成完成，总计生成: {len(images_base64_list)} 张图片")
         
-        # 收集流式响应
-        print("4. 接收流式响应（SSE格式）:")
-        print("=" * 60)
-        images_base64_list = []
-        partial_images = {}
-        
-        import json
-        
-        for event in stream:
-            if event is None:
-                continue
-            
-            # 打印 SSE 格式的输出
-            event_type = event.type
-            print(f"event: {event_type}")
-            
-            # 构建数据对象
-            event_data = {
-                "type": event_type,
-                "model": getattr(event, 'model', MODEL_ENDPOINT_ID),
-                "created": getattr(event, 'created', None),
-            }
-            
-            # 根据事件类型添加特定字段
-            if event_type in ["image_generation.partial_succeeded", "image_generation.succeeded"]:
-                # 获取图片索引
-                image_index = getattr(event, 'image_index', getattr(event, 'index', None))
-                if image_index is not None:
-                    event_data["image_index"] = image_index
-                
-                # URL 模式
-                if hasattr(event, 'url') and event.url:
-                    event_data["url"] = event.url
-                    if hasattr(event, 'size'):
-                        event_data["size"] = event.size
-                    print(f"data: {json.dumps(event_data, ensure_ascii=False)}")
-                    print()  # 空行分隔
-                
-                # Base64 模式
-                elif hasattr(event, 'b64_json') and event.b64_json:
-                    # Base64 数据太长，只显示元数据，不显示完整 base64
-                    event_data["image_index"] = image_index if image_index is not None else len(images_base64_list)
-                    event_data["b64_json"] = f"[Base64数据，长度: {len(event.b64_json)}]"
-                    if hasattr(event, 'size'):
-                        event_data["size"] = event.size
-                    print(f"data: {json.dumps(event_data, ensure_ascii=False)}")
-                    print()  # 空行分隔
-                    
-                    # 保存 Base64 数据
-                    images_base64_list.append(event.b64_json)
-            
-            elif event_type == "image_generation.partial_image":
-                # 部分图片数据
-                if hasattr(event, 'b64_json') and event.b64_json:
-                    index = getattr(event, 'partial_image_index', getattr(event, 'image_index', None))
-                    event_data["image_index"] = index
-                    event_data["b64_json"] = f"[Base64数据，长度: {len(event.b64_json)}]"
-                    print(f"data: {json.dumps(event_data, ensure_ascii=False)}")
-                    print()  # 空行分隔
-                    partial_images[index] = event.b64_json
-            
-            elif event_type == "image_generation.completed":
-                # 完成事件
-                if hasattr(event, 'usage'):
-                    event_data["usage"] = {
-                        "generated_images": getattr(event.usage, 'generated_images', None),
-                        "output_tokens": getattr(event.usage, 'output_tokens', None),
-                        "total_tokens": getattr(event.usage, 'total_tokens', None),
-                    }
-                print(f"data: {json.dumps(event_data, ensure_ascii=False)}")
-                print()  # 空行分隔
-            
-            elif event_type in ["image_generation.failed", "image_generation.partial_failed"]:
-                # 失败事件
-                if hasattr(event, 'error') and event.error:
-                    event_data["error"] = {
-                        "code": getattr(event.error, 'code', None),
-                        "message": getattr(event.error, 'message', str(event.error)),
-                    }
-                print(f"data: {json.dumps(event_data, ensure_ascii=False)}")
-                print()  # 空行分隔
-            
-            else:
-                # 其他事件类型
-                print(f"data: {json.dumps(event_data, ensure_ascii=False)}")
-                print()  # 空行分隔
-        
-        # 打印结束标记
-        print("data: [DONE]")
-        print("=" * 60)
-        
-        # 如果 partial_images 里有数据，合并到主列表
-        if partial_images and not images_base64_list:
-            for i in sorted(partial_images.keys()):
-                images_base64_list.append(partial_images[i])
-        
-        print(f"\n总计生成: {len(images_base64_list)} 张图片")
-        
-        # 6. 保存图片
+        # 5. 保存图片
         if images_base64_list:
             print("\n5. 保存生成的图片:")
             project_root = Path(__file__).parent.parent
@@ -210,10 +109,10 @@ async def test_simple():
                     f.write(image_bytes)
                 
                 size_mb = len(image_bytes) / (1024 * 1024)
-                print(f"  图片 {i} 已保存: {output_path} ({size_mb:.2f}MB)")
+                print(f"   ✓ 图片 {i} 已保存: {output_path} ({size_mb:.2f}MB)")
         
         print("\n" + "=" * 60)
-        print("测试成功完成")
+        print("✓ 测试成功完成")
         print("=" * 60)
         
     except Exception as e:

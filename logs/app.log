@@ -376,3 +376,113 @@ components.schemas.CreatePictureRespDto.Reference.$ref
 2025-11-28 03:13:21 [INFO    ] [journey_poster.py:53] Journey Poster 服务正在关闭
 2025-11-28 03:13:21 [INFO    ] [journey_poster.py:57] 清理服务资源
 2025-11-28 03:13:21 [INFO    ] [journey_poster.py:61] Journey Poster 服务关闭完成
+2025-11-28 10:38:30 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 10:38:30 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:38:57 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 10:38:57 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:39:13 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 10:39:13 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:39:13 [INFO    ] [llm.py:195] 调用豆包生图接口（OpenAI SDK）
+2025-11-28 10:39:13 [INFO    ] [llm.py:196]   Base URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:39:13 [INFO    ] [llm.py:197]   API Key: 已配置 (长度: 36)
+2025-11-28 10:39:13 [INFO    ] [llm.py:198]   Model ID: ep-m-20251127211119-7fbfh
+2025-11-28 10:39:13 [INFO    ] [llm.py:207] ✓ OpenAI 客户端创建成功
+2025-11-28 10:39:15 [ERROR   ] [llm.py:290] 调用豆包生图接口失败
+2025-11-28 10:39:15 [ERROR   ] [llm.py:291]   错误类型: NameError
+2025-11-28 10:39:15 [ERROR   ] [llm.py:292]   错误信息: name 'SequentialImageGenerationOptions' is not defined
+2025-11-28 10:39:34 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 10:39:34 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:39:34 [INFO    ] [llm.py:195] 调用豆包生图接口（OpenAI SDK）
+2025-11-28 10:39:34 [INFO    ] [llm.py:196]   Base URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:39:34 [INFO    ] [llm.py:197]   API Key: 已配置 (长度: 36)
+2025-11-28 10:39:34 [INFO    ] [llm.py:198]   Model ID: ep-m-20251127211119-7fbfh
+2025-11-28 10:39:34 [INFO    ] [llm.py:207] ✓ OpenAI 客户端创建成功
+2025-11-28 10:39:35 [ERROR   ] [llm.py:294] 调用豆包生图接口失败
+2025-11-28 10:39:35 [ERROR   ] [llm.py:295]   错误类型: TypeError
+2025-11-28 10:39:35 [ERROR   ] [llm.py:296]   错误信息: Images.generate() got an unexpected keyword argument 'image'
+2025-11-28 10:39:58 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 10:39:58 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:39:58 [INFO    ] [llm.py:195] 调用豆包生图接口（OpenAI SDK）
+2025-11-28 10:39:58 [INFO    ] [llm.py:196]   Base URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:39:58 [INFO    ] [llm.py:197]   API Key: 已配置 (长度: 36)
+2025-11-28 10:39:58 [INFO    ] [llm.py:198]   Model ID: ep-m-20251127211119-7fbfh
+2025-11-28 10:39:58 [INFO    ] [llm.py:207] ✓ OpenAI 客户端创建成功
+2025-11-28 10:40:37 [INFO    ] [_client.py:1025] HTTP Request: POST https://ark.cn-beijing.volces.com/api/v3/images/generations "HTTP/1.1 200 OK"
+2025-11-28 10:41:39 [INFO    ] [llm.py:263] Final completed event
+2025-11-28 10:41:39 [INFO    ] [llm.py:265] recv.Usage: Usage(input_tokens=None, input_tokens_details=None, output_tokens=64896, total_tokens=64896, generated_images=4)
+2025-11-28 10:41:39 [WARNING ] [llm.py:288] 期望生成4张图片，实际生成0张
+2025-11-28 10:52:03 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 10:52:03 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:52:03 [INFO    ] [llm.py:195] 调用豆包生图接口（OpenAI SDK）
+2025-11-28 10:52:03 [INFO    ] [llm.py:196]   Base URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:52:03 [INFO    ] [llm.py:197]   API Key: 已配置 (长度: 36)
+2025-11-28 10:52:03 [INFO    ] [llm.py:198]   Model ID: ep-m-20251127211119-7fbfh
+2025-11-28 10:52:03 [INFO    ] [llm.py:207] ✓ OpenAI 客户端创建成功
+2025-11-28 10:52:59 [INFO    ] [_client.py:1025] HTTP Request: POST https://ark.cn-beijing.volces.com/api/v3/images/generations "HTTP/1.1 200 OK"
+2025-11-28 10:52:59 [INFO    ] [llm.py:235] 开始接收流式响应...
+2025-11-28 10:53:01 [INFO    ] [llm.py:244] Event 1: type=ImageGenPartialImageEvent
+2025-11-28 10:53:01 [INFO    ] [llm.py:249] Event 1: event_type=image_generation.partial_succeeded
+2025-11-28 10:53:46 [INFO    ] [llm.py:244] Event 2: type=ImageGenPartialImageEvent
+2025-11-28 10:53:46 [INFO    ] [llm.py:249] Event 2: event_type=image_generation.partial_succeeded
+2025-11-28 10:53:47 [INFO    ] [llm.py:244] Event 3: type=ImageGenPartialImageEvent
+2025-11-28 10:53:47 [INFO    ] [llm.py:249] Event 3: event_type=image_generation.partial_succeeded
+2025-11-28 10:54:07 [INFO    ] [llm.py:244] Event 4: type=ImageGenPartialImageEvent
+2025-11-28 10:54:07 [INFO    ] [llm.py:249] Event 4: event_type=image_generation.partial_succeeded
+2025-11-28 10:54:07 [INFO    ] [llm.py:244] Event 5: type=ImageGenCompletedEvent
+2025-11-28 10:54:07 [INFO    ] [llm.py:249] Event 5: event_type=image_generation.completed
+2025-11-28 10:54:07 [INFO    ] [llm.py:272] Final completed event
+2025-11-28 10:54:07 [INFO    ] [llm.py:274] recv.Usage: Usage(input_tokens=None, input_tokens_details=None, output_tokens=64896, total_tokens=64896, generated_images=4)
+2025-11-28 10:54:07 [INFO    ] [llm.py:284] 流式响应结束，共收到 5 个事件
+2025-11-28 10:54:07 [WARNING ] [llm.py:307] 期望生成4张图片，实际生成0张
+2025-11-28 10:54:16 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 10:54:16 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:54:16 [INFO    ] [llm.py:195] 调用豆包生图接口（OpenAI SDK）
+2025-11-28 10:54:16 [INFO    ] [llm.py:196]   Base URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:54:16 [INFO    ] [llm.py:197]   API Key: 已配置 (长度: 36)
+2025-11-28 10:54:16 [INFO    ] [llm.py:198]   Model ID: ep-m-20251127211119-7fbfh
+2025-11-28 10:54:16 [INFO    ] [llm.py:207] ✓ OpenAI 客户端创建成功
+2025-11-28 10:55:13 [INFO    ] [_client.py:1025] HTTP Request: POST https://ark.cn-beijing.volces.com/api/v3/images/generations "HTTP/1.1 200 OK"
+2025-11-28 10:55:13 [INFO    ] [llm.py:235] 开始接收流式响应...
+2025-11-28 10:55:15 [INFO    ] [llm.py:244] Event 1: type=ImageGenPartialImageEvent
+2025-11-28 10:55:15 [INFO    ] [llm.py:249] Event 1: event_type=image_generation.partial_succeeded
+2025-11-28 10:55:15 [INFO    ] [llm.py:262] recv b64_json: index=0, size=1349092
+2025-11-28 10:55:16 [INFO    ] [llm.py:244] Event 2: type=ImageGenPartialImageEvent
+2025-11-28 10:55:16 [INFO    ] [llm.py:249] Event 2: event_type=image_generation.partial_succeeded
+2025-11-28 10:55:16 [INFO    ] [llm.py:262] recv b64_json: index=1, size=1523736
+2025-11-28 10:55:30 [INFO    ] [llm.py:244] Event 3: type=ImageGenPartialImageEvent
+2025-11-28 10:55:30 [INFO    ] [llm.py:249] Event 3: event_type=image_generation.partial_succeeded
+2025-11-28 10:55:30 [INFO    ] [llm.py:262] recv b64_json: index=2, size=1527304
+2025-11-28 10:55:47 [INFO    ] [llm.py:244] Event 4: type=ImageGenPartialImageEvent
+2025-11-28 10:55:47 [INFO    ] [llm.py:249] Event 4: event_type=image_generation.partial_succeeded
+2025-11-28 10:55:47 [INFO    ] [llm.py:262] recv b64_json: index=3, size=2035684
+2025-11-28 10:55:47 [INFO    ] [llm.py:244] Event 5: type=ImageGenCompletedEvent
+2025-11-28 10:55:47 [INFO    ] [llm.py:249] Event 5: event_type=image_generation.completed
+2025-11-28 10:55:47 [INFO    ] [llm.py:281] Final completed event
+2025-11-28 10:55:47 [INFO    ] [llm.py:283] recv.Usage: Usage(input_tokens=None, input_tokens_details=None, output_tokens=64896, total_tokens=64896, generated_images=4)
+2025-11-28 10:55:47 [INFO    ] [llm.py:293] 流式响应结束，共收到 5 个事件
+2025-11-28 10:58:39 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 10:58:39 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:58:39 [INFO    ] [llm.py:195] 调用豆包生图接口（OpenAI SDK）
+2025-11-28 10:58:39 [INFO    ] [llm.py:196]   Base URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 10:58:39 [INFO    ] [llm.py:197]   API Key: 已配置 (长度: 36)
+2025-11-28 10:58:39 [INFO    ] [llm.py:198]   Model ID: ep-m-20251127211119-7fbfh
+2025-11-28 10:58:39 [INFO    ] [llm.py:207] ✓ OpenAI 客户端创建成功
+2025-11-28 10:59:21 [INFO    ] [_client.py:1025] HTTP Request: POST https://ark.cn-beijing.volces.com/api/v3/images/generations "HTTP/1.1 200 OK"
+2025-11-28 10:59:21 [INFO    ] [llm.py:235] 开始接收流式响应...
+2025-11-28 10:59:22 [INFO    ] [llm.py:244] Event 1: type=ImageGenPartialImageEvent
+2025-11-28 10:59:22 [INFO    ] [llm.py:249] Event 1: event_type=image_generation.partial_succeeded
+2025-11-28 10:59:22 [INFO    ] [llm.py:262] recv b64_json: index=0, size=1464292
+2025-11-28 11:00:02 [INFO    ] [llm.py:244] Event 2: type=ImageGenPartialImageEvent
+2025-11-28 11:00:02 [INFO    ] [llm.py:249] Event 2: event_type=image_generation.partial_succeeded
+2025-11-28 11:00:02 [INFO    ] [llm.py:262] recv b64_json: index=1, size=1621188
+2025-11-28 11:00:20 [INFO    ] [llm.py:244] Event 3: type=ImageGenPartialImageEvent
+2025-11-28 11:00:20 [INFO    ] [llm.py:249] Event 3: event_type=image_generation.partial_succeeded
+2025-11-28 11:00:20 [INFO    ] [llm.py:262] recv b64_json: index=2, size=1190856
+2025-11-28 11:00:22 [INFO    ] [llm.py:244] Event 4: type=ImageGenPartialImageEvent
+2025-11-28 11:00:22 [INFO    ] [llm.py:249] Event 4: event_type=image_generation.partial_succeeded
+2025-11-28 11:00:22 [INFO    ] [llm.py:262] recv b64_json: index=3, size=1997300
+2025-11-28 11:00:22 [INFO    ] [llm.py:244] Event 5: type=ImageGenCompletedEvent
+2025-11-28 11:00:22 [INFO    ] [llm.py:249] Event 5: event_type=image_generation.completed
+2025-11-28 11:00:22 [INFO    ] [llm.py:281] Final completed event
+2025-11-28 11:00:22 [INFO    ] [llm.py:283] recv.Usage: Usage(input_tokens=None, input_tokens_details=None, output_tokens=69360, total_tokens=69360, generated_images=4)
+2025-11-28 11:00:22 [INFO    ] [llm.py:293] 流式响应结束，共收到 5 个事件

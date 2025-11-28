@@ -5,10 +5,8 @@ import time
 import logging
 import os
 from typing import Optional, List
-from openai import AsyncOpenAI
+from openai import OpenAI, AsyncOpenAI
 from pydantic import BaseModel
-from volcenginesdkarkruntime import Ark
-from volcenginesdkarkruntime.types.images.images import SequentialImageGenerationOptions
 from utils.image_utils import prepare_image_list_for_api
 from setting import settings 
 
@@ -19,7 +17,8 @@ class LLMConf(BaseModel):
     """
     大模型配置
     """
-
+    url: Optional[str] = None
+    api_key: Optional[str] = None
     scene_id: Optional[str] = None
     stream_timeout: Optional[int] = None
     post_timeout: Optional[int] = None
@@ -161,7 +160,7 @@ class LLMModel:
 
     async def createPictureBySeedReam(self, InputImageList: List[str], prompt: str) -> List[str]:
         """
-        调用豆包生图接口，stream 图生图
+        调用豆包生图接口，stream 图生图（使用 OpenAI SDK）
         input：
             InputImageList: 输入图片列表（Base64编码）
             prompt: 提示词
@@ -180,6 +179,7 @@ class LLMModel:
             # 使用 settings 配置，如果没有则从环境变量读取（兼容测试文件）
             base_url = settings.LLM_URL or os.getenv('LLM_URL')
             api_key = settings.LLM_API_KEY or os.getenv('LLM_API_KEY')
+            model_id = settings.LLM_SCENE_ID or os.getenv('LLM_SCENE_ID')
             
             if not base_url or not api_key:
                 error_msg = "LLM_URL 和 LLM_API_KEY 必须配置"
@@ -187,37 +187,44 @@ class LLMModel:
                 logger.error(f"当前 LLM_URL: {base_url}, LLM_API_KEY: {'已配置' if api_key else '未配置'}")
                 raise ValueError(error_msg)
             
-            # 验证 Base URL 格式
-            if 'api.deepseek.com' in base_url:
-                logger.warning(f"⚠️  检测到 DeepSeek URL，豆包 API 应该是: https://ark.{{region}}.volces.com/api/v3")
+            if not model_id:
+                error_msg = "LLM_SCENE_ID 必须配置（模型接入点ID）"
+                logger.error(error_msg)
+                raise ValueError(error_msg)
             
-            logger.info(f"调用豆包生图接口")
+            logger.info(f"调用豆包生图接口（OpenAI SDK）")
             logger.info(f"  Base URL: {base_url}")
             logger.info(f"  API Key: {'已配置 (长度: ' + str(len(api_key)) + ')' if api_key else '未配置'}")
+            logger.info(f"  Model ID: {model_id}")
             
-            # 创建 Ark 客户端，添加超时配置
+            # 创建 OpenAI 客户端
             try:
-                client = Ark(
+                client = OpenAI(
                     base_url=base_url, 
                     api_key=api_key,
                     timeout=120.0,  # 图片生成可能需要较长时间
                 )
-                logger.info("✓ Ark 客户端创建成功")
+                logger.info("✓ OpenAI 客户端创建成功")
             except Exception as e:
-                logger.error(f"✗ 创建 Ark 客户端失败: {e}")
+                logger.error(f"✗ 创建 OpenAI 客户端失败: {e}")
                 raise 
         
-            # 使用 b64_json 格式接收 Base64 数据
-            stream = client.images.generate( 
-                model="doubao-seedream-4-0-250828", 
+            # 使用 OpenAI SDK 的 images.generate 接口（流式）
+            # 豆包特有参数通过 extra_body 传递
+            stream = client.images.generate(
+                model=model_id,
                 prompt=prompt,
-                image=prepared_images,
                 size="2K",
-                sequential_image_generation="auto",
-                sequential_image_generation_options=SequentialImageGenerationOptions(max_images=4),
                 response_format="b64_json",  # 使用 b64_json 格式接收 Base64 数据
                 stream=True,
-                watermark=False
+                extra_body={
+                    "image": prepared_images,  # 输入图片
+                    "watermark": False,
+                    "sequential_image_generation": "auto",
+                    "sequential_image_generation_options": {
+                        "max_images": 4
+                    }
+                }
             )
             
             # 收集流式返回的图片数据
@@ -225,33 +232,65 @@ class LLMModel:
             partial_images = {}  # 用于存储部分图片数据 {index: base64_data}
             
             # 遍历流式响应
+            logger.info("开始接收流式响应...")
+            event_count = 0
             for event in stream:
+                event_count += 1
                 if event is None:
+                    logger.debug(f"Event {event_count}: None")
                     continue
-                    
-                if event.type == "image_generation.partial_failed":
-                    logger.error(f"Stream generate images error: {event.error}")
-                    if event.error is not None and event.error.code == "InternalServiceError":
+                
+                # 打印事件的完整结构用于调试
+                logger.info(f"Event {event_count}: type={type(event).__name__}")
+                logger.debug(f"Event {event_count} attributes: {dir(event)}")
+                
+                # OpenAI SDK 的流式响应结构
+                event_type = getattr(event, 'type', None)
+                logger.info(f"Event {event_count}: event_type={event_type}")
+                
+                if event_type == "image_generation.partial_failed":
+                    error = getattr(event, 'error', None)
+                    logger.error(f"Stream generate images error: {error}")
+                    if error and getattr(error, 'code', None) == "InternalServiceError":
                         break
                         
-                elif event.type == "image_generation.partial_succeeded":
-                    # 图片生成成功（URL 模式）
-                    if event.error is None and hasattr(event, 'url') and event.url:
-                        logger.info(f"recv.Size: {event.size}, recv.Url: {event.url}")
+                elif event_type == "image_generation.partial_succeeded":
+                    # 图片生成成功
+                    if hasattr(event, 'b64_json') and event.b64_json:
+                        # Base64 模式
+                        index = getattr(event, 'index', len(images_base64_list))
+                        logger.info(f"recv b64_json: index={index}, size={len(event.b64_json)}")
+                        base64_data = event.b64_json
+                        if not base64_data.startswith('data:image'):
+                            base64_data = f"data:image/png;base64,{base64_data}"
+                        images_base64_list.append(base64_data)
+                    elif hasattr(event, 'url') and event.url:
+                        # URL 模式
+                        size = getattr(event, 'size', 'unknown')
+                        logger.info(f"recv.Size: {size}, recv.Url: {event.url}")
                         
-                elif event.type == "image_generation.partial_image":
+                elif event_type == "image_generation.partial_image":
                     # 接收部分图片的 Base64 数据
                     if hasattr(event, 'b64_json') and event.b64_json:
-                        index = event.partial_image_index
+                        index = getattr(event, 'partial_image_index', getattr(event, 'index', len(partial_images)))
                         logger.info(f"Partial image index={index}, size={len(event.b64_json)}")
                         partial_images[index] = event.b64_json
                         
-                elif event.type == "image_generation.completed":
+                elif event_type == "image_generation.completed":
                     # 生成完成
-                    if event.error is None:
-                        logger.info("Final completed event")
-                        if hasattr(event, 'usage'):
-                            logger.info(f"recv.Usage: {event.usage}")
+                    logger.info("Final completed event")
+                    if hasattr(event, 'usage'):
+                        logger.info(f"recv.Usage: {event.usage}")
+                else:
+                    # 未知事件类型，尝试直接获取图片数据
+                    logger.warning(f"Unknown event type: {event_type}")
+                    if hasattr(event, 'b64_json') and event.b64_json:
+                        logger.info(f"Found b64_json in unknown event, size={len(event.b64_json)}")
+                        images_base64_list.append(event.b64_json)
+                    elif hasattr(event, 'data'):
+                        logger.info(f"Found data in event: {type(event.data)}")
+            
+            logger.info(f"流式响应结束，共收到 {event_count} 个事件")
             
             # 按索引顺序整理图片数据
             if partial_images:

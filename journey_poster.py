@@ -14,7 +14,7 @@ from setting import settings, ENV
 from core.llm import LLMModel
 from dto.createPictureReqDto import CreatePictureReqDto
 from dto.createPictureRespDto import CreatePictureRespDto
-from core.generation_Image import doubao_images
+from service.generation_Image import doubao_images
 from core.exceptions import CommonException
 
 # 初始化日志
@@ -182,7 +182,7 @@ async def create_picture(createPictureReqDto: CreatePictureReqDto) -> CreatePict
     **参数说明：**
     - `originPicBase64`: 用户上传的原图，Base64编码格式（data:image/jpeg;base64,... 或 data:image/png;base64,...）
     - `city`: 城市枚举值（0-19，如0=东京、1=巴黎等）
-    - `sex`: 性别（0=男、1=女）
+    - `gender`: 性别（0=男、1=女）
     - `mode`: 模式（0=轻松模式、1=大师模式）
     - `clothes`: 轻松模式下必填，包含服装配置
     - `master_mode_tags`: 大师模式下必填，包含风格、材质、色调等标签
@@ -191,18 +191,20 @@ async def create_picture(createPictureReqDto: CreatePictureReqDto) -> CreatePict
     - 成功时返回4张生成的图片（Base64编码列表）
     - 失败时返回错误信息
     """
-    try:
-        retry_times = 0
-        # 调用图生图方法
-        return await doubao_images().createPicture(createPictureReqDto)
-
-    except Exception as e:
-        logger.error(f"图生图接口异常,重新尝试{retry_times}次: {e}")
-        retry_times += 1
-        await asyncio.sleep(1)
-        # 重新尝试调用 生图方法
-        if retry_times > 1:
-            raise CommonException(message="图生图接口异常")
+    max_retries = 2
+    for attempt in range(max_retries):
+        try:
+            # 1. 直接传对象进去
+            return await doubao_images().createPicture(createPictureReqDto)
+            
+        except Exception as e:
+            logger.error(f"图生图接口异常, 第 {attempt + 1} 次尝试失败: {e}")
+            if attempt == max_retries - 1:
+                # 最后一次也没成功，抛出异常
+                raise CommonException(message="图生图接口异常: " + str(e))
+            
+            # 等待一秒后重试
+            await asyncio.sleep(1)
         
         
         

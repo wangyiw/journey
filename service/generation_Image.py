@@ -3,11 +3,14 @@ from typing import List
 from core.llm import LLMModel
 from dto.createPictureReqDto import CreatePictureReqDto
 from dto.createPictureRespDto import CreatePictureRespDto
-from core.enum import CityEnum, ModeEnum, SexEnum
-from core.exceptions import CommonException
+from core.enum import CityEnum, ModeEnum, GenderEnum
+from core.exceptions import CommonException, ParamException, ErrorCode
 from core.prompt_strategy import generate_prompt_by_request
-from utils.image_utils import validate_image_format, validate_image_constraints
-
+from utils.image_utils import validate_image_format, validate_image_constraints, load_clothes_image
+from utils.logger import logger
+import logging
+    
+logger = logging.getLogger(__name__)
 
 
 class doubao_images(LLMModel):
@@ -75,7 +78,7 @@ class doubao_images(LLMModel):
             raise CommonException(message="城市不存在")
         if requestDto.mode not in ModeEnum:
             raise CommonException(message="mode参数错误")
-        if requestDto.sex not in SexEnum:
+        if requestDto.sex not in GenderEnum:
             raise CommonException(message="sex参数错误")
         if requestDto.mode == ModeEnum.EASY and requestDto.clothes is None:
             raise CommonException(message="轻松模式下必须提供服装参数")
@@ -87,10 +90,54 @@ class doubao_images(LLMModel):
         
         # 3.拼装提示词（使用策略模式）
         createPicturePrompt = generate_prompt_by_request(requestDto)
+        logger.info(f"拼装提示词：{createPicturePrompt}")
         
-        # 4.调用火山豆包生图接口
+        # 4.准备输入图片列表
+        # 图片来源说明：
+        # - 人物原图：前端传入的 Base64（requestDto.originPicBase64）
+        # - 服装图片：后端根据性别和样式ID从本地文件加载（使用 ClothesLoader）
         createPictureInputBase64List = []
+        
+        # 4.1 添加人物原图（前端传入）
         createPictureInputBase64List.append(requestDto.originPicBase64)
+        logger.info(f"添加人物原图: 来源=前端上传")
+        
+        # 4.2 轻松模式：根据性别和样式ID自动加载服装图片（后端本地文件）
+        if requestDto.mode == ModeEnum.EASY and requestDto.clothes:
+            try:
+                # 使用统一的服装图片加载方法
+                clothes_images = load_clothes_image(
+                    sex=requestDto.gender.value,
+                    upper_style_id=requestDto.clothes.upperStyle,
+                    lower_style_id=requestDto.clothes.lowerStyle,
+                    dress_id=requestDto.clothes.dress
+                )
+                
+                # 添加服装图片到输入列表
+                createPictureInputBase64List.extend(clothes_images)
+                
+                # 日志记录
+                if requestDto.clothes.dress is not None:
+                    logger.info(f"添加连衣裙: 性别={requestDto.gender.name}, 样式ID={requestDto.clothes.dress}, 来源=本地文件")
+                else:
+                    logger.info(f"添加服装图片: 性别={requestDto.gender.name}, 上装ID={requestDto.clothes.upperStyle}, 下装ID={requestDto.clothes.lowerStyle}, 来源=本地文件")
+                
+            except ValueError as e:
+                logger.error(f"加载服装图片失败: {e}")
+                raise ParamException(
+                    message=str(e),
+                    error_code=ErrorCode.PARAM_INVALID
+                )
+            except FileNotFoundError as e:
+                logger.error(f"服装图片文件不存在: {e}")
+                raise ParamException(
+                    message="服装图片文件不存在，请联系管理员",
+                    error_code=ErrorCode.RESOURCE_NOT_FOUND
+                )
+        
+        logger.info(f"输入图片总数: {len(createPictureInputBase64List)} 张（1张人物 + {len(createPictureInputBase64List)-1}张服装）")
+        
+        # 5.调用火山豆包生图接口
         outputImageBase64List = await self.createPictureBySeedReam(createPictureInputBase64List, createPicturePrompt)
         
         # 5.校验生成图片质量

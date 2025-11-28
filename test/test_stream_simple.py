@@ -85,11 +85,11 @@ async def test_simple():
             prompt=test_prompt
         )
         
-        print(f"\n✓ 生成完成，总计生成: {len(images_base64_list)} 张图片")
+        print(f"\n生成完成，总计生成: {len(images_base64_list)} 张图片")
         
         # 5. 保存图片
         if images_base64_list:
-            print("\n5. 保存生成的图片:")
+            print("\n保存生成的图片:")
             project_root = Path(__file__).parent.parent
             output_dir = project_root / "utils" / "pictures" / "output"
             output_dir.mkdir(exist_ok=True)

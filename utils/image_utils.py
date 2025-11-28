@@ -2,6 +2,7 @@ import re
 import base64
 from typing import Union, List, Tuple
 from io import BytesIO
+from pathlib import Path
 from PIL import Image
 
 
@@ -152,6 +153,123 @@ def validate_image_constraints(base64_string: str) -> Tuple[bool, str]:
         
     except Exception as e:
         return False, f"图片验证失败: {str(e)}"
+
+
+def load_local_image_to_base64(file_path: Union[str, Path]) -> str:
+    """
+    从本地文件加载图片并转换为 Base64 编码
+    
+    Args:
+        file_path: 图片文件路径
+        
+    Returns:
+        str: Base64 编码的图片字符串（格式：data:image/<format>;base64,<base64_data>）
+        
+    Raises:
+        FileNotFoundError: 文件不存在
+        ValueError: 不支持的图片格式
+    """
+    file_path = Path(file_path)
+    
+    if not file_path.exists():
+        raise FileNotFoundError(f"图片文件不存在: {file_path}")
+    
+    # 读取文件
+    with open(file_path, 'rb') as f:
+        image_bytes = f.read()
+    
+    # Base64 编码
+    base64_data = base64.b64encode(image_bytes).decode('utf-8')
+    
+    # 根据文件扩展名确定 MIME 类型
+    ext = file_path.suffix.lower()
+    if ext in ['.jpg', '.jpeg']:
+        mime_type = 'image/jpeg'
+    elif ext == '.png':
+        mime_type = 'image/png'
+    else:
+        raise ValueError(f"不支持的图片格式: {ext}，仅支持 .jpg, .jpeg, .png")
+    
+    return f"data:{mime_type};base64,{base64_data}"
+
+
+def load_clothes_image(sex: int, upper_style_id: int = None, lower_style_id: int = None, dress_id: int = None) -> List[str]:
+    """
+    根据性别和样式ID加载服装图片
+    
+    Args:
+        sex: 性别（0=男，1=女）
+        upper_style_id: 上装样式ID（可选）
+        lower_style_id: 下装样式ID（可选）
+        dress_id: 连衣裙样式ID（可选，仅女性）
+        
+    Returns:
+        List[str]: 服装图片Base64列表
+        
+    Raises:
+        FileNotFoundError: 图片文件不存在
+        ValueError: 参数错误
+        
+    Example:
+        >>> # 男性上装+下装
+        >>> load_clothes_image(sex=0, upper_style_id=101, lower_style_id=201)
+        ['data:image/jpeg;base64,...', 'data:image/jpeg;base64,...']
+        
+        >>> # 女性连衣裙
+        >>> load_clothes_image(sex=1, dress_id=301)
+        ['data:image/jpeg;base64,...']
+    """
+    # 获取服装图片根目录
+    clothes_dir = Path(__file__).parent / "pictures" / "clothes"
+    
+    # 根据性别确定子目录
+    if sex == 0:  # 男性
+        gender_dir = clothes_dir / "male"
+        if dress_id is not None:
+            raise ValueError("男性不能选择连衣裙")
+        if upper_style_id is None or lower_style_id is None:
+            raise ValueError("男性必须同时选择上装和下装")
+    elif sex == 1:  # 女性
+        gender_dir = clothes_dir / "male" / "female"  # 根据你的实际目录结构
+        # 连衣裙和上下装二选一
+        has_dress = dress_id is not None
+        has_upper_lower = upper_style_id is not None or lower_style_id is not None
+        if has_dress and has_upper_lower:
+            raise ValueError("女性不能同时选择连衣裙和上装下装")
+        if has_upper_lower and (upper_style_id is None or lower_style_id is None):
+            raise ValueError("女性选择上装下装时，必须同时选择上装和下装")
+    else:
+        raise ValueError(f"无效的性别值: {sex}，必须是 0（男）或 1（女）")
+    
+    result = []
+    
+    # 加载连衣裙
+    if dress_id is not None:
+        dress_file = gender_dir / f"female_dress_{dress_id}.jpg"
+        if not dress_file.exists():
+            # 尝试其他可能的命名
+            dress_file = gender_dir / f"dress_{dress_id}.jpg"
+        result.append(load_local_image_to_base64(dress_file))
+    
+    # 加载上装+下装
+    if upper_style_id is not None and lower_style_id is not None:
+        # 根据性别确定文件前缀
+        prefix = "male" if sex == 0 else "female"
+        
+        # 上装文件
+        upper_file = gender_dir / f"{prefix}_clothes.jpg"
+        if not upper_file.exists():
+            upper_file = gender_dir / f"{prefix}_top_{upper_style_id}.jpg"
+        
+        # 下装文件
+        lower_file = gender_dir / f"{prefix}_pants.jpg"
+        if not lower_file.exists():
+            lower_file = gender_dir / f"{prefix}_bottom_{lower_style_id}.jpg"
+        
+        result.append(load_local_image_to_base64(upper_file))
+        result.append(load_local_image_to_base64(lower_file))
+    
+    return result
 
 
 def prepare_image_list_for_api(image_inputs: List[str]) -> Union[str, List[str]]:

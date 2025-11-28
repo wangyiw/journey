@@ -8,3 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
+
+# pictures
+utils\pictures\output
+
+# Logs
+logs
+

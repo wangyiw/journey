@@ -1,7 +1,7 @@
 from enum import IntEnum
 
 
-class SexEnum(IntEnum):
+class GenderEnum(IntEnum):
     """性别枚举"""
     MALE = 0  # 男
     FEMALE = 1  # 女

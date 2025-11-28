@@ -131,12 +131,12 @@ def generate_prompt_by_request(request_dto: CreatePictureReqDto) -> str:
         
     Example:
         >>> from dto.createPictureReqDto import CreatePictureReqDto
-        >>> from core.enum import CityEnum, ModeEnum, SexEnum
+        >>> from core.enum import CityEnum, ModeEnum, GenderEnum
         >>> 
         >>> request = CreatePictureReqDto(
         ...     originPicUrl="https://example.com/image.jpg",
         ...     city=CityEnum.Tokyo,
-        ...     sex=SexEnum.FEMALE,
+        ...     sex=GenderEnum.FEMALE,
         ...     mode=ModeEnum.EASY,
         ...     clothes={"items": [...]}
         ... )

@@ -510,3 +510,138 @@ components.schemas.CreatePictureRespDto.Reference.$ref
 2025-11-28 11:31:40 [ERROR   ] [llm.py:340]   错误类型: NotFoundError
 2025-11-28 11:31:40 [ERROR   ] [llm.py:341]   错误信息: Error code: 404
 2025-11-28 11:31:40 [ERROR   ] [llm.py:363]   诊断: 模型不存在
+2025-11-28 11:49:42 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 11:49:42 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 11:51:56 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 11:51:56 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 11:52:49 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 11:52:49 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 11:53:16 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 11:53:16 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 11:53:45 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 11:53:45 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 11:53:45 [INFO    ] [llm.py:209]   Base URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 11:53:45 [INFO    ] [llm.py:210]   API Key: 已配置
+2025-11-28 11:53:45 [INFO    ] [llm.py:211]   Model ID: ep-m-20251127211119-7fbfh
+2025-11-28 11:53:45 [INFO    ] [llm.py:220]  OpenAI 客户端创建成功
+2025-11-28 11:54:29 [INFO    ] [_client.py:1025] HTTP Request: POST https://ark.cn-beijing.volces.com/api/v3/images/generations "HTTP/1.1 200 OK"
+2025-11-28 11:54:29 [INFO    ] [llm.py:248] 开始接收流式响应...
+2025-11-28 11:54:30 [INFO    ] [llm.py:257] Event 1: type=ImageGenPartialImageEvent
+2025-11-28 11:54:30 [INFO    ] [llm.py:262] Event 1: event_type=image_generation.partial_succeeded
+2025-11-28 11:54:30 [INFO    ] [llm.py:275] recv b64_json: index=0, size=1499128
+2025-11-28 11:54:50 [INFO    ] [llm.py:257] Event 2: type=ImageGenPartialImageEvent
+2025-11-28 11:54:50 [INFO    ] [llm.py:262] Event 2: event_type=image_generation.partial_succeeded
+2025-11-28 11:54:50 [INFO    ] [llm.py:275] recv b64_json: index=1, size=1544144
+2025-11-28 11:55:03 [INFO    ] [llm.py:257] Event 3: type=ImageGenPartialImageEvent
+2025-11-28 11:55:03 [INFO    ] [llm.py:262] Event 3: event_type=image_generation.partial_succeeded
+2025-11-28 11:55:03 [INFO    ] [llm.py:275] recv b64_json: index=2, size=1366928
+2025-11-28 11:55:20 [INFO    ] [llm.py:257] Event 4: type=ImageGenPartialImageEvent
+2025-11-28 11:55:20 [INFO    ] [llm.py:262] Event 4: event_type=image_generation.partial_succeeded
+2025-11-28 11:55:20 [INFO    ] [llm.py:275] recv b64_json: index=3, size=1874232
+2025-11-28 11:55:20 [INFO    ] [llm.py:257] Event 5: type=ImageGenCompletedEvent
+2025-11-28 11:55:20 [INFO    ] [llm.py:262] Event 5: event_type=image_generation.completed
+2025-11-28 11:55:20 [INFO    ] [llm.py:294] Final completed event
+2025-11-28 11:55:20 [INFO    ] [llm.py:296] recv.Usage: Usage(input_tokens=None, input_tokens_details=None, output_tokens=69360, total_tokens=69360, generated_images=4)
+2025-11-28 11:55:20 [INFO    ] [llm.py:306] 流式响应结束，共收到 5 个事件
+2025-11-28 11:58:25 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 11:58:25 [INFO    ] [setting.py:42] LLM_URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 11:58:30 [INFO    ] [llm.py:209]   Base URL: https://ark.cn-beijing.volces.com/api/v3
+2025-11-28 11:58:30 [INFO    ] [llm.py:210]   API Key: 已配置
+2025-11-28 11:58:30 [INFO    ] [llm.py:211]   Model ID: ep-m-20251127211119-7fbfh
+2025-11-28 11:58:30 [INFO    ] [llm.py:220]  OpenAI 客户端创建成功
+2025-11-28 11:59:19 [INFO    ] [_client.py:1025] HTTP Request: POST https://ark.cn-beijing.volces.com/api/v3/images/generations "HTTP/1.1 200 OK"
+2025-11-28 11:59:19 [INFO    ] [llm.py:248] 开始接收流式响应...
+2025-11-28 11:59:20 [INFO    ] [llm.py:257] Event 1: type=ImageGenPartialImageEvent
+2025-11-28 11:59:20 [INFO    ] [llm.py:262] Event 1: event_type=image_generation.partial_succeeded
+2025-11-28 11:59:20 [INFO    ] [llm.py:275] recv b64_json: index=0, size=1769440
+2025-11-28 11:59:47 [INFO    ] [llm.py:257] Event 2: type=ImageGenPartialImageEvent
+2025-11-28 11:59:47 [INFO    ] [llm.py:262] Event 2: event_type=image_generation.partial_succeeded
+2025-11-28 11:59:47 [INFO    ] [llm.py:275] recv b64_json: index=1, size=1807488
+2025-11-28 12:00:04 [INFO    ] [llm.py:257] Event 3: type=ImageGenPartialImageEvent
+2025-11-28 12:00:04 [INFO    ] [llm.py:262] Event 3: event_type=image_generation.partial_succeeded
+2025-11-28 12:00:04 [INFO    ] [llm.py:275] recv b64_json: index=2, size=1192396
+2025-11-28 12:00:26 [INFO    ] [llm.py:257] Event 4: type=ImageGenPartialImageEvent
+2025-11-28 12:00:26 [INFO    ] [llm.py:262] Event 4: event_type=image_generation.partial_succeeded
+2025-11-28 12:00:26 [INFO    ] [llm.py:275] recv b64_json: index=3, size=1720212
+2025-11-28 12:00:26 [INFO    ] [llm.py:257] Event 5: type=ImageGenCompletedEvent
+2025-11-28 12:00:26 [INFO    ] [llm.py:262] Event 5: event_type=image_generation.completed
+2025-11-28 12:00:26 [INFO    ] [llm.py:294] Final completed event
+2025-11-28 12:00:26 [INFO    ] [llm.py:296] recv.Usage: Usage(input_tokens=None, input_tokens_details=None, output_tokens=69360, total_tokens=69360, generated_images=4)
+2025-11-28 12:00:26 [INFO    ] [llm.py:306] 流式响应结束，共收到 5 个事件
+2025-11-28 12:22:51 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 12:22:51 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 12:22:51 [INFO    ] [llm.py:209]   Base URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 12:22:51 [INFO    ] [llm.py:210]   API Key: 已配置
+2025-11-28 12:22:51 [INFO    ] [llm.py:211]   Model ID: doubao-seedream-4-0-250828
+2025-11-28 12:22:51 [INFO    ] [llm.py:220]  OpenAI 客户端创建成功
+2025-11-28 12:23:52 [INFO    ] [_client.py:1025] HTTP Request: POST http://dragon-open-api-test.didainternal.com/api/v3/images/generations "HTTP/1.1 504 Gateway Time-out"
+2025-11-28 12:23:52 [INFO    ] [_base_client.py:1071] Retrying request to /images/generations in 0.497265 seconds
+2025-11-28 12:24:24 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 12:24:24 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 12:24:24 [INFO    ] [llm.py:209]   Base URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 12:24:24 [INFO    ] [llm.py:210]   API Key: 已配置
+2025-11-28 12:24:24 [INFO    ] [llm.py:211]   Model ID: doubao-seedream-4-0-250828
+2025-11-28 12:24:24 [INFO    ] [llm.py:220]  OpenAI 客户端创建成功
+2025-11-28 12:24:31 [INFO    ] [_client.py:1025] HTTP Request: POST http://dragon-open-api-test.didainternal.com/api/v3/images/generations "HTTP/1.1 200 OK"
+2025-11-28 12:24:31 [INFO    ] [llm.py:248] 开始接收流式响应...
+2025-11-28 12:24:31 [INFO    ] [llm.py:257] Event 1: type=ImageGenPartialImageEvent
+2025-11-28 12:24:31 [INFO    ] [llm.py:262] Event 1: event_type=image_generation.partial_succeeded
+2025-11-28 12:24:31 [INFO    ] [llm.py:275] recv b64_json: index=0, size=1432292
+2025-11-28 12:24:54 [INFO    ] [llm.py:257] Event 2: type=ImageGenPartialImageEvent
+2025-11-28 12:24:54 [INFO    ] [llm.py:262] Event 2: event_type=image_generation.partial_succeeded
+2025-11-28 12:24:54 [INFO    ] [llm.py:275] recv b64_json: index=1, size=1624212
+2025-11-28 12:24:55 [INFO    ] [_client.py:1025] HTTP Request: POST http://dragon-open-api-test.didainternal.com/api/v3/images/generations "HTTP/1.1 200 OK"
+2025-11-28 12:24:55 [INFO    ] [llm.py:248] 开始接收流式响应...
+2025-11-28 12:24:55 [INFO    ] [llm.py:257] Event 1: type=ImageGenPartialImageEvent
+2025-11-28 12:24:55 [INFO    ] [llm.py:262] Event 1: event_type=image_generation.partial_succeeded
+2025-11-28 12:24:55 [INFO    ] [llm.py:275] recv b64_json: index=0, size=1461704
+2025-11-28 12:25:29 [INFO    ] [llm.py:257] Event 2: type=ImageGenPartialImageEvent
+2025-11-28 12:25:29 [INFO    ] [llm.py:262] Event 2: event_type=image_generation.partial_succeeded
+2025-11-28 12:25:29 [INFO    ] [llm.py:275] recv b64_json: index=1, size=1896496
+2025-11-28 12:25:29 [INFO    ] [llm.py:257] Event 3: type=ImageGenPartialImageEvent
+2025-11-28 12:25:29 [INFO    ] [llm.py:262] Event 3: event_type=image_generation.partial_succeeded
+2025-11-28 12:25:29 [INFO    ] [llm.py:275] recv b64_json: index=2, size=1457664
+2025-11-28 12:25:31 [INFO    ] [llm.py:257] Event 3: type=ImageGenPartialImageEvent
+2025-11-28 12:25:31 [INFO    ] [llm.py:262] Event 3: event_type=image_generation.partial_succeeded
+2025-11-28 12:25:31 [INFO    ] [llm.py:275] recv b64_json: index=2, size=1359208
+2025-11-28 12:25:31 [INFO    ] [llm.py:257] Event 4: type=ImageGenPartialImageEvent
+2025-11-28 12:25:31 [INFO    ] [llm.py:262] Event 4: event_type=image_generation.partial_succeeded
+2025-11-28 12:25:31 [INFO    ] [llm.py:275] recv b64_json: index=3, size=1603220
+2025-11-28 12:25:31 [INFO    ] [llm.py:257] Event 5: type=ImageGenCompletedEvent
+2025-11-28 12:25:31 [INFO    ] [llm.py:262] Event 5: event_type=image_generation.completed
+2025-11-28 12:25:31 [INFO    ] [llm.py:294] Final completed event
+2025-11-28 12:25:31 [INFO    ] [llm.py:296] recv.Usage: Usage(input_tokens=None, input_tokens_details=None, output_tokens=69360, total_tokens=69360, generated_images=4)
+2025-11-28 12:25:31 [INFO    ] [llm.py:306] 流式响应结束，共收到 5 个事件
+2025-11-28 12:25:46 [INFO    ] [llm.py:257] Event 4: type=ImageGenPartialImageEvent
+2025-11-28 12:25:46 [INFO    ] [llm.py:262] Event 4: event_type=image_generation.partial_succeeded
+2025-11-28 12:25:46 [INFO    ] [llm.py:275] recv b64_json: index=3, size=1731040
+2025-11-28 12:25:46 [INFO    ] [llm.py:257] Event 5: type=ImageGenCompletedEvent
+2025-11-28 12:25:46 [INFO    ] [llm.py:262] Event 5: event_type=image_generation.completed
+2025-11-28 12:25:46 [INFO    ] [llm.py:294] Final completed event
+2025-11-28 12:25:46 [INFO    ] [llm.py:296] recv.Usage: Usage(input_tokens=None, input_tokens_details=None, output_tokens=64896, total_tokens=64896, generated_images=4)
+2025-11-28 12:25:46 [INFO    ] [llm.py:306] 流式响应结束，共收到 5 个事件
+2025-11-28 14:41:11 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 14:41:11 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 14:42:26 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 14:42:26 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 14:43:20 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 14:43:20 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 14:43:21 [INFO    ] [journey_poster.py:30] Journey Poster 服务正在启动...
+2025-11-28 14:43:21 [INFO    ] [journey_poster.py:33] Journey Poster 服务启动 - 环境: dev
+2025-11-28 14:43:21 [INFO    ] [journey_poster.py:36] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 14:43:21 [INFO    ] [journey_poster.py:37] LLM_API_KEY: 已配置
+2025-11-28 14:43:21 [INFO    ] [journey_poster.py:38] LLM_SCENE_ID: doubao-seedream-4-0-250828
+2025-11-28 14:43:21 [INFO    ] [journey_poster.py:42] 火山豆包初始化成功
+2025-11-28 14:43:21 [INFO    ] [journey_poster.py:46] Journey Poster 服务启动完成
+2025-11-28 15:02:10 [INFO    ] [journey_poster.py:53] Journey Poster 服务正在关闭
+2025-11-28 15:02:10 [INFO    ] [journey_poster.py:57] 清理服务资源
+2025-11-28 15:02:10 [INFO    ] [journey_poster.py:61] Journey Poster 服务关闭完成
+2025-11-28 15:02:13 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 15:02:13 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 15:02:14 [INFO    ] [journey_poster.py:30] Journey Poster 服务正在启动...
+2025-11-28 15:02:14 [INFO    ] [journey_poster.py:33] Journey Poster 服务启动 - 环境: dev
+2025-11-28 15:02:14 [INFO    ] [journey_poster.py:36] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 15:02:14 [INFO    ] [journey_poster.py:37] LLM_API_KEY: 已配置
+2025-11-28 15:02:14 [INFO    ] [journey_poster.py:38] LLM_SCENE_ID: doubao-seedream-4-0-250828
+2025-11-28 15:02:14 [INFO    ] [journey_poster.py:42] 火山豆包初始化成功
+2025-11-28 15:02:14 [INFO    ] [journey_poster.py:46] Journey Poster 服务启动完成

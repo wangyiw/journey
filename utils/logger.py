@@ -49,3 +49,9 @@ def setup_logging(log_level="DEBUG"):
     uvicorn_logger.handlers = []
     uvicorn_logger.propagate = True
 
+
+# 初始化日志配置
+setup_logging()
+
+# 导出 logger 实例供其他模块使用
+logger = logging.getLogger(__name__)

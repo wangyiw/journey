@@ -261,14 +261,14 @@ def load_clothes_image(sex: int, upper_style_id: int = None, lower_style_id: int
     # 获取服装图片根目录
     clothes_dir = Path(__file__).parent / "pictures" / "clothes"
     
-    # 根据性别确定子目录
-    if sex == 0:  # 男性
+    # 标准化性别参数（支持字符串 "Male"/"Female" 和整数 0/1）
+    if sex in ["Male", 0]:
         gender_dir = clothes_dir / "male"
         if dress_id is not None:
             raise ValueError("男性不能选择连衣裙")
         if upper_style_id is None or lower_style_id is None:
             raise ValueError("男性必须同时选择上装和下装")
-    elif sex == 1:  # 女性
+    elif sex in ["Female", 1]:
         gender_dir = clothes_dir / "female"
         # 连衣裙和上下装二选一
         has_dress = dress_id is not None
@@ -278,7 +278,7 @@ def load_clothes_image(sex: int, upper_style_id: int = None, lower_style_id: int
         if has_upper_lower and (upper_style_id is None or lower_style_id is None):
             raise ValueError("女性选择上装下装时，必须同时选择上装和下装")
     else:
-        raise ValueError(f"无效的性别值: {sex}，必须是 0（男）或 1（女）")
+        raise ValueError(f"无效的性别值: {sex}，必须是 'Male'/'Female' 或 0/1")
     
     result = []
     

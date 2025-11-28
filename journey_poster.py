@@ -14,9 +14,10 @@ import json
 from setting import settings, ENV
 from core.llm import LLMModel
 from core.llm import LLMConf
-from dto.createPictureReqDto import CreatePictureReqDto
-from dto.createPictureRespDto import CreatePictureRespDto
+from model.createPictureReq import CreatePictureRequest
+from model.createPictureResp import CreatePictureResponse
 from service.generation_Image import DoubaoImages
+from model.createPictureResp import ImageStreamEvent, StreamStatusEnum
 from core.exceptions import CommonException
 
 # 初始化日志
@@ -175,7 +176,7 @@ async def health_check():
     return await process_response(data, message="healthy")
 
 @app.post("/createPicture", tags=["图生图接口"])
-async def create_picture(createPictureReqDto: CreatePictureReqDto) -> CreatePictureRespDto:
+async def create_picture(CreatePictureRequest: CreatePictureRequest) -> CreatePictureResponse:
     """
     图片生图接口
     
@@ -198,7 +199,7 @@ async def create_picture(createPictureReqDto: CreatePictureReqDto) -> CreatePict
         try:
             # 1. 创建 LLM 配置并实例化
             llm_conf = LLMConf()
-            return await DoubaoImages(llm_conf).create_picture(createPictureReqDto)
+            return await DoubaoImages(llm_conf).create_picture(CreatePictureRequest)
             
         except Exception as e:
             logger.error(f"图生图接口异常, 第 {attempt + 1} 次尝试失败: {e}")
@@ -210,7 +211,7 @@ async def create_picture(createPictureReqDto: CreatePictureReqDto) -> CreatePict
             await asyncio.sleep(1)
         
 @app.post("/createPictureStream", tags=["图生图接口"])
-async def create_picture_stream(createPictureReqDto: CreatePictureReqDto):
+async def create_picture_stream(CreatePictureRequest: CreatePictureRequest):
     """
     流式图片生成接口
     
@@ -223,21 +224,34 @@ async def create_picture_stream(createPictureReqDto: CreatePictureReqDto):
     **返回格式：**
     - Content-Type: text/event-stream
     - 每张图片作为一个 SSE 事件返回
-    - 事件格式: data: {"index": 0, "base64": "data:image/..."}
+    - 事件格式: 
+      ```json
+      // 生成中
+      {"status": "generating", "index": 0, "base64": "data:image/...", "message": "success"}
+      // 完成
+      {"status": "completed", "message": "生成流程结束，共生成 4 张图片"}
+      // 失败
+      {"status": "failed", "message": "错误信息"}
+      ```
     """
     async def generateImageStream():
         max_retries = 2
         for attempt in range(max_retries):
             try:
                 llm_conf = LLMConf()
-                async for chunk in DoubaoImages(llm_conf).create_picture_stream(createPictureReqDto):
+                # service 层已经封装了完整的状态推送（generating/completed/failed）
+                async for chunk in DoubaoImages(llm_conf).create_picture_stream(CreatePictureRequest):
                     yield chunk
                 return
             except Exception as e:
                 logger.error(f"图生图SSE接口异常, 第 {attempt + 1} 次尝试失败: {e}")
                 if attempt == max_retries - 1:
-                    error_data = json.dumps({"error": str(e)})
-                    yield f"data: {error_data}\n\n"
+                    # 最后一次失败，发送 failed 状态
+                    error_resp = ImageStreamEvent(
+                        status=StreamStatusEnum.FAILED,
+                        message=f"接口调用失败: {str(e)}"
+                    )
+                    yield error_resp.to_event_data()
                 else:
                     await asyncio.sleep(1)
     
@@ -250,7 +264,6 @@ async def create_picture_stream(createPictureReqDto: CreatePictureReqDto):
             "X-Accel-Buffering": "no"
         }
     )
-        
 
 
 # ==================== 主程序入口 ====================

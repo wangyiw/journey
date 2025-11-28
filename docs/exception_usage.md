@@ -210,7 +210,7 @@ from core.exceptions import ParamException, LLMException, ErrorCode
 router = APIRouter()
 
 @router.post("/generate")
-async def generate_image(request: CreatePictureReqDto):
+async def generate_image(request: CreatePictureRequest):
     # 参数验证
     if not request.prompt:
         raise ParamException(

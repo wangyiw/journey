@@ -2,14 +2,14 @@ from abc import ABC, abstractmethod
 from typing import Dict, Any
 from core.prompt import BASE_PROMPT_TEMPLATE, CITY_SCENES, CLOTHING_TEMPLATES
 from core.enum import ModeEnum, StyleEnum, MaterialEnum, ColorEnum, TypeEnum, CityEnum
-from dto.createPictureReqDto import CreatePictureReqDto
+from model.createPictureReq import CreatePictureRequest
 
 
 class PromptStrategy(ABC):
     """提示词生成策略基类"""
     
     @abstractmethod
-    def generate_prompt(self, request_dto: CreatePictureReqDto) -> str:
+    def generate_prompt(self, request_dto: CreatePictureRequest) -> str:
         """生成提示词"""
         pass
     
@@ -24,7 +24,7 @@ class PromptStrategy(ABC):
 class EasyModePromptStrategy(PromptStrategy):
     """轻松模式提示词策略"""
     
-    def generate_prompt(self, request_dto: CreatePictureReqDto) -> str:
+    def generate_prompt(self, request_dto: CreatePictureRequest) -> str:
         """
         轻松模式：根据城市和服装生成提示词
         """
@@ -44,36 +44,36 @@ class MasterModePromptStrategy(PromptStrategy):
     """大师模式提示词策略"""
     
     STYLE_MAPPING = {
-        StyleEnum.FRENCH_ELEGANT: "法式优雅",
-        StyleEnum.JAPANESE_SIMPLE: "日系简约",
-        StyleEnum.FUTURE_TECH: "未来科技",
-        StyleEnum.AI_RANDOM: "AI随机匹配"
+        StyleEnum.FrenchElegant: "法式优雅",
+        StyleEnum.JapaneseSimple: "日系简约",
+        StyleEnum.FutureTech: "未来科技",
+        StyleEnum.AIRandom: "AI随机匹配"
     }
     
     MATERIAL_MAPPING = {
-        MaterialEnum.DENIM: "牛仔",
-        MaterialEnum.SILK: "丝绸",
-        MaterialEnum.COTTON: "棉料",
-        MaterialEnum.METAL: "金属",
-        MaterialEnum.AI_RANDOM: "AI随机匹配"
+        MaterialEnum.Denim: "牛仔",
+        MaterialEnum.Silk: "丝绸",
+        MaterialEnum.Cotton: "棉料",
+        MaterialEnum.Metal: "金属",
+        MaterialEnum.AIRandom: "AI随机匹配"
     }
     
     COLOR_MAPPING = {
-        ColorEnum.WARM: "暖色调",
-        ColorEnum.COLD: "冷色调",
-        ColorEnum.NEUTRAL: "中性色调",
-        ColorEnum.AI_RANDOM: "AI随机匹配"
+        ColorEnum.Warm: "暖色调",
+        ColorEnum.Cold: "冷色调",
+        ColorEnum.Neutral: "中性色调",
+        ColorEnum.AIRandom: "AI随机匹配"
     }
     
     TYPE_MAPPING = {
-        TypeEnum.SUIT: "套装",
-        TypeEnum.DRESS: "连衣裙",
-        TypeEnum.COAT: "外套",
-        TypeEnum.LOCAL_COSTUME: "当地特色服饰",
-        TypeEnum.AI_RANDOM: "AI随机匹配"
+        TypeEnum.Suit: "套装",
+        TypeEnum.Dress: "连衣裙",
+        TypeEnum.Coat: "外套",
+        TypeEnum.LocalCostume: "当地特色服饰",
+        TypeEnum.AIRandom: "AI随机匹配"
     }
     
-    def generate_prompt(self, request_dto: CreatePictureReqDto) -> str:
+    def generate_prompt(self, request_dto: CreatePictureRequest) -> str:
         """
         大师模式：根据城市和标签生成提示词
         """
@@ -111,15 +111,15 @@ class PromptStrategyFactory:
         """
         根据模式获取对应的策略
         """
-        if mode == ModeEnum.EASY:
+        if mode == ModeEnum.Easy:
             return EasyModePromptStrategy()
-        elif mode == ModeEnum.MASTER:
+        elif mode == ModeEnum.Master:
             return MasterModePromptStrategy()
         else:
             raise ValueError(f"不支持的模式: {mode}")
 
 
-def generate_prompt_by_request(request_dto: CreatePictureReqDto) -> str:
+def generate_prompt_by_request(request_dto: CreatePictureRequest) -> str:
     """
     根据请求DTO生成提示词（对外统一接口）
     
@@ -130,14 +130,14 @@ def generate_prompt_by_request(request_dto: CreatePictureReqDto) -> str:
         str: 生成的提示词
         
     Example:
-        >>> from dto.createPictureReqDto import CreatePictureReqDto
+        >>> from model.createPictureReq import CreatePictureRequest
         >>> from core.enum import CityEnum, ModeEnum, GenderEnum
         >>> 
-        >>> request = CreatePictureReqDto(
+        >>> request = CreatePictureRequest(
         ...     originPicUrl="https://example.com/image.jpg",
         ...     city=CityEnum.Tokyo,
-        ...     sex=GenderEnum.FEMALE,
-        ...     mode=ModeEnum.EASY,
+        ...     sex=GenderEnum.Female,
+        ...     mode=ModeEnum.Easy,
         ...     clothes={"items": [...]}
         ... )
         >>> prompt = generate_prompt_by_request(request)

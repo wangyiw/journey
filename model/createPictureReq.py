@@ -91,7 +91,7 @@ class MasterModeTags(BaseModel):
     type: Optional[TypeEnum] = Field(None, description="类型：0-套装、1-连衣裙、2-外套、3-当地特色服饰、4-AI随机匹配")
 
 
-class CreatePictureReqDto(BaseModel):
+class CreatePictureRequest(BaseModel):
     """
     图片生图前端传的入参
     """
@@ -131,30 +131,30 @@ class CreatePictureReqDto(BaseModel):
     def validate_clothes_for_easy_mode(cls, v, info):
         """验证轻松模式下必须提供服装配置"""
         mode = info.data.get('mode')
-        if mode == ModeEnum.EASY and v is None:
+        if mode == ModeEnum.Easy and v is None:
             raise ValueError("轻松模式下必须提供服装配置")
         return v
     @field_validator('master_mode_tags')
     def validate_master_mode_tags_for_master_mode(cls, v, info):
         """验证大师模式下必须提供标签配置"""
         mode = info.data.get('mode')
-        if mode == ModeEnum.MASTER and v is None:
+        if mode == ModeEnum.Master and v is None:
             raise ValueError("大师模式下必须提供标签配置")
         return v
     
     @model_validator(mode='after')
     def validate_gender_and_clothes(self):
         """验证性别和服装类别的匹配"""
-        if self.mode == ModeEnum.EASY and self.clothes:
+        if self.mode == ModeEnum.Easy and self.clothes:
             # 男性：只能选择上装+下装
-            if self.gender == GenderEnum.MALE:
+            if self.gender == GenderEnum.Male:
                 if self.clothes.dress is not None:
                     raise ValueError("男性不能选择连衣裙")
                 if self.clothes.upperStyle is None or self.clothes.lowerStyle is None:
                     raise ValueError("男性必须同时选择上装和下装")
             
             # 女性：可以选择上装+下装 或 连衣裙（二选一）
-            if self.gender == GenderEnum.FEMALE:
+            if self.gender == GenderEnum.Female:
                 has_dress = self.clothes.dress is not None
                 has_upper_lower = self.clothes.upperStyle is not None or self.clothes.lowerStyle is not None
                 
@@ -175,36 +175,36 @@ class CreatePictureReqDto(BaseModel):
             "examples": [
                 {
                     "originPicBase64": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...",
-                    "city": 0,
-                    "gender": 0,
-                    "mode": 0,
+                    "city": "Tokyo",
+                    "gender": "Male",
+                    "mode": "Easy",
                     "clothes": {
-                        "upperStyle": 101,
-                        "lowerStyle": 201,
+                        "upperStyle": 0,
+                        "lowerStyle": 1,
                         "dress": None
                     }
                 },
                 {
                     "originPicBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
-                    "city": 1,
-                    "gender": 1,
-                    "mode": 0,
+                    "city": "Paris",
+                    "gender": "Female",
+                    "mode": "Easy",
                     "clothes": {
-                        "upperStyle": 101,
-                        "lowerStyle": 201,
+                        "upperStyle": 0,
+                        "lowerStyle": 1,
                         "dress": None
                     }
                 },
                 {
                     "originPicBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
-                    "city": 1,
-                    "gender": 1,
-                    "mode": 1,
+                    "city": "Paris",
+                    "gender": "Female",
+                    "mode": "Master",
                     "master_mode_tags": {
-                        "style": 0,      
-                        "material": 1,   
-                        "color": 2,      
-                        "type": 0        
+                        "style": "FrenchElegant",
+                        "material": "Silk",
+                        "color": "Neutral",
+                        "type": "Suit"
                     }
                 }
             ]

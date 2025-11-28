@@ -1,79 +1,80 @@
-from enum import IntEnum
+from enum import Enum
 
 
-class GenderEnum(IntEnum):
-    """性别枚举"""
-    MALE = 0  # 男
-    FEMALE = 1  # 女
-
-class CityEnum(IntEnum):
-    """城市枚举"""
-    Tokyo = 0           # 东京
-    Paris = 1           # 巴黎
-    London = 2          # 伦敦
-    NewYork = 3         # 纽约
-    Bangkok = 4         # 曼谷
-    Rome = 5            # 罗马
-    Madrid = 6          # 马德里
-    Istanbul = 7        # 伊斯坦布尔
-    Milan = 8           # 米兰
-    Singapore = 9       # 新加坡
-    Dubai = 10          # 迪拜
-    Beijing = 11        # 北京
-    Shenzhen = 12       # 深圳
-    Berlin = 13         # 柏林
-    KualaLumpur = 14    # 吉隆坡
-    Seoul = 15          # 首尔
-    Shanghai = 16       # 上海
-    HongKong = 17       # 香港
-    Amsterdam = 18      # 阿姆斯特丹
-    Sydney = 19         # 悉尼
+class GenderEnum(str, Enum):
+    """性别枚举 """
+    Male = "Male"      # 男
+    Female = "Female"  # 女
 
 
-class ModeEnum(IntEnum):
-    """模式枚举"""
-    EASY = 0  # 轻松模式
-    MASTER = 1  # 大师模式
+class CityEnum(str, Enum):
+    """城市枚举 """
+    Tokyo = "Tokyo"              # 东京
+    Paris = "Paris"              # 巴黎
+    London = "London"            # 伦敦
+    NewYork = "NewYork"          # 纽约
+    Bangkok = "Bangkok"          # 曼谷
+    Rome = "Rome"                # 罗马
+    Madrid = "Madrid"            # 马德里
+    Istanbul = "Istanbul"        # 伊斯坦布尔
+    Milan = "Milan"              # 米兰
+    Singapore = "Singapore"      # 新加坡
+    Dubai = "Dubai"              # 迪拜
+    Beijing = "Beijing"          # 北京
+    Shenzhen = "Shenzhen"        # 深圳
+    Berlin = "Berlin"            # 柏林
+    KualaLumpur = "KualaLumpur"  # 吉隆坡
+    Seoul = "Seoul"              # 首尔
+    Shanghai = "Shanghai"        # 上海
+    HongKong = "HongKong"        # 香港
+    Amsterdam = "Amsterdam"      # 阿姆斯特丹
+    Sydney = "Sydney"            # 悉尼
 
 
-class StyleEnum(IntEnum):
-    """风格枚举"""
-    FRENCH_ELEGANT = 0  # 法式优雅
-    JAPANESE_SIMPLE = 1  # 日系简约
-    FUTURE_TECH = 2  # 未来科技
-    AI_RANDOM = 3  # AI随机匹配
+class ModeEnum(str, Enum):
+    """模式枚举 """
+    Easy = "Easy"      # 轻松模式
+    Master = "Master"  # 大师模式
 
 
-class MaterialEnum(IntEnum):
-    """材质枚举"""
-    DENIM = 0  # 牛仔
-    SILK = 1  # 丝绸
-    COTTON = 2  # 棉料
-    METAL = 3  # 金属
-    AI_RANDOM = 4  # AI随机匹配
+class StyleEnum(str, Enum):
+    """风格枚举 """
+    FrenchElegant = "FrenchElegant"    # 法式优雅
+    JapaneseSimple = "JapaneseSimple"  # 日系简约
+    FutureTech = "FutureTech"          # 未来科技
+    AIRandom = "AIRandom"              # AI随机匹配
 
 
-class ColorEnum(IntEnum):
-    """色调枚举"""
-    WARM = 0  # 暖色调
-    COLD = 1  # 冷色调
-    NEUTRAL = 2  # 中性色调
-    AI_RANDOM = 3  # AI随机匹配
+class MaterialEnum(str, Enum):
+    """材质枚举 """
+    Denim = "Denim"        # 牛仔
+    Silk = "Silk"          # 丝绸
+    Cotton = "Cotton"      # 棉料
+    Metal = "Metal"        # 金属
+    AIRandom = "AIRandom"  # AI随机匹配
 
 
-class TypeEnum(IntEnum):
-    """类型枚举"""
-    SUIT = 0  # 套装
-    DRESS = 1  # 连衣裙
-    COAT = 2  # 外套
-    LOCAL_COSTUME = 3  # 当地特色服饰
-    AI_RANDOM = 4  # AI随机匹配
+class ColorEnum(str, Enum):
+    """色调枚举 """
+    Warm = "Warm"          # 暖色调
+    Cold = "Cold"          # 冷色调
+    Neutral = "Neutral"    # 中性色调
+    AIRandom = "AIRandom"  # AI随机匹配
 
 
-class ClothesCategory(IntEnum):
-    """服装类别枚举"""
-    MALE_TOP = 0  # 男上装
-    MALE_BOTTOM = 1  # 男下装
-    FEMALE_TOP = 2  # 女上装
-    FEMALE_BOTTOM = 3  # 女下装
-    DRESS = 4  # 连衣裙
+class TypeEnum(str, Enum):
+    """类型枚举 """
+    Suit = "Suit"                  # 套装
+    Dress = "Dress"                # 连衣裙
+    Coat = "Coat"                  # 外套
+    LocalCostume = "LocalCostume"  # 当地特色服饰
+    AIRandom = "AIRandom"          # AI随机匹配
+
+
+class ClothesCategory(str, Enum):
+    """服装类别枚举 """
+    MaleTop = "MaleTop"        # 男上装
+    MaleBottom = "MaleBottom"  # 男下装
+    FemaleTop = "FemaleTop"    # 女上装
+    FemaleBottom = "FemaleBottom"  # 女下装
+    Dress = "Dress"            # 连衣裙

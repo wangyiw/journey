@@ -1,12 +1,13 @@
 
 from typing import List
 from core.llm import LLMModel
-from dto.createPictureReqDto import CreatePictureReqDto
-from dto.createPictureRespDto import CreatePictureRespDto
+from model.createPictureReq import CreatePictureRequest
+from model.createPictureResp import CreatePictureResponse
 from core.enum import CityEnum, ModeEnum, GenderEnum
 from core.exceptions import CommonException, ParamException, ErrorCode
 from core.prompt_strategy import generate_prompt_by_request
-from dto.createPictureRespDto import ImageItem
+from model.createPictureResp import ImageItem
+from model.createPictureResp import ImageStreamEvent, StreamStatusEnum
 from utils.image_utils import validate_image_format, validate_image_constraints, load_clothes_image
 from utils.logger import logger
 import logging
@@ -70,7 +71,7 @@ class DoubaoImages(LLMModel):
         
         return True
 
-    async def verify_input_data(self, requestDto: CreatePictureReqDto):
+    async def verify_input_data(self, requestDto: CreatePictureRequest):
         """
         校验输入参数
         添加更多入参校验逻辑
@@ -81,13 +82,13 @@ class DoubaoImages(LLMModel):
             raise CommonException(message="mode参数错误")
         if requestDto.gender not in GenderEnum:
             raise CommonException(message="gender参数错误")
-        if requestDto.mode == ModeEnum.EASY and requestDto.clothes is None:
+        if requestDto.mode == ModeEnum.Easy and requestDto.clothes is None:
             raise CommonException(message="轻松模式下必须提供服装参数")
-        if requestDto.mode == ModeEnum.MASTER and requestDto.master_mode_tags is None:
+        if requestDto.mode == ModeEnum.Master and requestDto.master_mode_tags is None:
             raise CommonException(message="大师模式下必须提供标签参数")
 
 
-    async def create_picture(self, requestDto: CreatePictureReqDto)->CreatePictureRespDto:
+    async def create_picture(self, requestDto: CreatePictureRequest)->CreatePictureResponse:
         """
         图生图主逻辑
         """
@@ -111,9 +112,9 @@ class DoubaoImages(LLMModel):
         logger.info(f"添加人物原图: 来源=前端上传")
         
         # 4.2 轻松模式：根据性别和样式ID自动加载服装图片（后端本地文件）
-        if requestDto.mode == ModeEnum.EASY and requestDto.clothes:
+        if requestDto.mode == ModeEnum.Easy and requestDto.clothes:
             try:
-                # 使用统一的服装图片加载方法
+                # 服装图片加载
                 clothes_images = load_clothes_image(
                     sex=requestDto.gender.value,
                     upper_style_id=requestDto.clothes.upperStyle,
@@ -161,59 +162,77 @@ class DoubaoImages(LLMModel):
             for idx, img_base64 in enumerate(outputImageBase64List)
         ]
         
-        return CreatePictureRespDto(images=images)
+        return CreatePictureResponse(images=images)
     
-    async def create_picture_stream(self, requestDto: CreatePictureReqDto):
+    async def create_picture_stream(self, requestDto: CreatePictureRequest):
         """
         流式图生图 - 生成器方法，用于 SSE 推送
-        直接透传底层生成器，每生成一张图片就立即推送
+        每生成一张图片就立即推送，最后发送完成或失败状态
         """
-        # 参数校验
-        await self.verify_input_data(requestDto)
+        try:
+            # 参数校验
+            await self.verify_input_data(requestDto)
 
-        # 验证输入图片
-        await self.verify_input_image(requestDto.originPicBase64)
-        
-        # 生成提示词
-        createPicturePrompt = generate_prompt_by_request(requestDto)
-        logger.info(f"流式生成 - 提示词：{createPicturePrompt}")
-        
-        # 准备输入图片列表
-        createPictureInputBase64List = [requestDto.originPicBase64]
-        
-        # 轻松模式：加载服装图片
-        if requestDto.mode == ModeEnum.EASY and requestDto.clothes:
-            try:
-                clothes_images = load_clothes_image(
-                    sex=requestDto.gender.value,
-                    upper_style_id=requestDto.clothes.upperStyle,
-                    lower_style_id=requestDto.clothes.lowerStyle,
-                    dress_id=requestDto.clothes.dress
+            # 验证输入图片
+            await self.verify_input_image(requestDto.originPicBase64)
+            
+            # 生成提示词
+            createPicturePrompt = generate_prompt_by_request(requestDto)
+            logger.info(f"流式生成 - 提示词：{createPicturePrompt}")
+            
+            # 准备输入图片列表
+            createPictureInputBase64List = [requestDto.originPicBase64]
+            
+            # 轻松模式：加载服装图片
+            if requestDto.mode == ModeEnum.Easy and requestDto.clothes:
+                try:
+                    clothes_images = load_clothes_image(
+                        sex=requestDto.gender.value,
+                        upper_style_id=requestDto.clothes.upperStyle,
+                        lower_style_id=requestDto.clothes.lowerStyle,
+                        dress_id=requestDto.clothes.dress
+                    )
+                    createPictureInputBase64List.extend(clothes_images)
+                except ValueError as e:
+                    logger.error(f"加载服装图片失败: {e}")
+                    raise ParamException(message=str(e), error_code=ErrorCode.PARAM_INVALID)
+                except FileNotFoundError as e:
+                    logger.error(f"服装图片文件不存在: {e}")
+                    raise ParamException(message="服装图片文件不存在，请联系管理员", error_code=ErrorCode.RESOURCE_NOT_FOUND)
+            
+            logger.info(f"流式生成 - 输入图片总数: {len(createPictureInputBase64List)} 张")
+            
+            # 调用底层生成器，逐张推送图片
+            image_count = 0
+            async for base64_image in self.create_picture_by_seed_ream(createPictureInputBase64List, createPicturePrompt):
+                # 封装成功生成的消息
+                resp = ImageStreamEvent(
+                    status=StreamStatusEnum.GENERATING,
+                    index=image_count,
+                    base64=base64_image,
+                    message="success"
                 )
-                createPictureInputBase64List.extend(clothes_images)
-            except ValueError as e:
-                logger.error(f"加载服装图片失败: {e}")
-                raise ParamException(message=str(e), error_code=ErrorCode.PARAM_INVALID)
-            except FileNotFoundError as e:
-                logger.error(f"服装图片文件不存在: {e}")
-                raise ParamException(message="服装图片文件不存在，请联系管理员", error_code=ErrorCode.RESOURCE_NOT_FOUND)
-        
-        logger.info(f"流式生成 - 输入图片总数: {len(createPictureInputBase64List)} 张")
-        
-        # 调用底层生成器，透传每张图片
-        image_count = 0
-        async for base64_image in self.create_picture_by_seed_ream(createPictureInputBase64List, createPicturePrompt):
-            data = {
-                "index": image_count,
-                "base64": base64_image
-            }
-            image_count += 1
-            logger.info(f"流式推送图片 {image_count}/4")
-            yield f"data: {json.dumps(data)}\n\n"
-        
-        # 发送完成事件
-        logger.info(f"流式生成完成，共生成 {image_count} 张图片")
-        yield f"data: {json.dumps({'status': 'completed', 'total': image_count})}\n\n"
+                image_count += 1
+                logger.info(f"流式推送图片 index={image_count-1}")
+                yield resp.to_event_data()
+            
+            # 发送完成信号
+            logger.info(f"流式生成完成，共生成 {image_count} 张图片")
+            end_resp = ImageStreamEvent(
+                status=StreamStatusEnum.COMPLETED,
+                message=f"生成流程结束，共生成 {image_count} 张图片"
+            )
+            yield end_resp.to_event_data()
+            
+        except Exception as e:
+            # 发送错误信号
+            logger.error(f"流式生成异常: {e}")
+            from model.createPictureResp import ImageStreamEvent, StreamStatusEnum
+            error_resp = ImageStreamEvent(
+                status=StreamStatusEnum.FAILED,
+                message=str(e)
+            )
+            yield error_resp.to_event_data()
 
 
 

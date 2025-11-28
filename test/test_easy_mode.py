@@ -18,8 +18,8 @@ load_dotenv('.env.dev')
 from core.llm import LLMModel, LLMConf
 from core.prompt_strategy import generatePromptByRequest
 from core.enum import CityEnum, ModeEnum, GenderEnum, ClothesCategory
-from dto.createPictureReqDto import (
-    CreatePictureReqDto,
+from model.createPictureReq import (
+    CreatePictureRequest,
     ClothesItem,
     Clothes
 )
@@ -80,13 +80,13 @@ async def test_easy_mode():
     
     print(f"   上装样式ID: {upper_style}")
     print(f"   下装样式ID: {lower_style}")
-    print(f"   说明: 后端会根据性别({GenderEnum.MALE.name})和样式ID自动加载对应的服装图片")
+    print(f"   说明: 后端会根据性别({GenderEnum.Male.name})和样式ID自动加载对应的服装图片")
     
-    request = CreatePictureReqDto(
+    request = CreatePictureRequest(
         originPicBase64=image_base64_list[0],  # 使用第一张图片作为原图
-        mode=ModeEnum.EASY,
+        mode=ModeEnum.Easy,
         city=CityEnum.Tokyo,
-        sex=GenderEnum.MALE,
+        sex=GenderEnum.Male,
         clothes=clothes
     )
     

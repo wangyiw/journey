@@ -380,6 +380,7 @@
 
     <script>
         const API_URL = "http://localhost:8123/createPicture";
+        const API_STREAM_URL = "http://localhost:8123/createPictureStream";
         let base64Image = "";
 
         const els = {
@@ -524,12 +525,23 @@
             els.debugInfo.innerText = "请求参数:\n" + JSON.stringify(payload, null, 2);
             els.debugInfo.style.display = 'block';
 
-            // 发起请求
+            // 使用流式接口
             try {
                 setLoading(true);
                 els.statusText.innerText = "生成中...";
 
-                const response = await fetch(API_URL, {
+                // 清空图片网格，创建占位符
+                els.imageGrid.innerHTML = '';
+                for (let i = 0; i < 4; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'result-item';
+                    div.id = `image-slot-${i}`;
+                    div.style.cssText = 'display:flex;align-items:center;justify-content:center;color:#ccc;';
+                    div.innerText = `${i + 1}`;
+                    els.imageGrid.appendChild(div);
+                }
+
+                const response = await fetch(API_STREAM_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -537,21 +549,53 @@
                     body: JSON.stringify(payload)
                 });
 
-                const data = await response.json();
-
                 if (!response.ok) {
-                    throw new Error(data.message || `HTTP Error: ${response.status}`);
+                    throw new Error(`HTTP Error: ${response.status}`);
                 }
 
-                // 处理返回数据
-                const images = data.data?.images || data.images || [];
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+                let imageCount = 0;
 
-                renderImages(images);
-                els.statusText.innerText = `生成成功!(${images.length} 张)`;
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) {
+                        break;
+                    }
 
-                // 显示完整响应
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop();
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const jsonStr = line.substring(6);
+                            try {
+                                const data = JSON.parse(jsonStr);
+                                
+                                if (data.error) {
+                                    throw new Error(data.error);
+                                }
+                                
+                                if (data.status === 'completed') {
+                                    els.statusText.innerText = `生成成功! (${data.total} 张)`;
+                                    console.log('生成完成:', data);
+                                } else if (data.base64) {
+                                    imageCount++;
+                                    renderStreamImage(data.index, data.base64);
+                                    els.statusText.innerText = `生成中... (${imageCount}/4)`;
+                                }
+                            } catch (e) {
+                                console.error('解析 SSE 数据失败:', e, jsonStr);
+                            }
+                        }
+                    }
+                }
+
                 els.debugInfo.innerText = "请求参数:\n" + JSON.stringify(payload, null, 2) +
-                    "\n\n响应数据:\n" + JSON.stringify(data, null, 2);
+                    "\n\n流式接收完成";
 
             } catch (error) {
                 console.error(error);
@@ -560,6 +604,19 @@
                 els.debugInfo.innerText += "\n\n错误信息:\n" + error.message;
             } finally {
                 setLoading(false);
+            }
+        }
+        
+        function renderStreamImage(index, base64) {
+            const slot = document.getElementById(`image-slot-${index}`);
+            if (slot) {
+                let src = base64;
+                if (!src.startsWith('data:image')) {
+                    src = 'data:image/png;base64,' + src;
+                }
+                slot.innerHTML = `<img src="${src}" onclick="window.open(this.src)" title="点击查看大图">`;
+                slot.style.cssText = '';
+                console.log(`渲染图片 ${index + 1}`);
             }
         }
 
@@ -571,11 +628,11 @@
                 return;
             }
 
-            base64List.forEach((b64, index) => {
+            base64List.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
 
-                let src = b64;
+                let src = typeof item === 'string' ? item : item.base64;
                 if (!src.startsWith('data:image')) {
                     src = 'data:image/png;base64,' + src;
                 }

@@ -843,3 +843,97 @@ components.schemas.CreatePictureRespDto.Reference.$ref
 2025-11-28 16:21:42 [INFO    ] [journey_poster.py:38] LLM_SCENE_ID: doubao-seedream-4-0-250828
 2025-11-28 16:21:42 [INFO    ] [journey_poster.py:42] 火山豆包初始化成功
 2025-11-28 16:21:42 [INFO    ] [journey_poster.py:46] Journey Poster 服务启动完成
+2025-11-28 16:21:45 [INFO    ] [generation_Image.py:94] 拼装提示词：将用户人物从原图中进行干净、精细的抠图，保持人物五官特征、脸型轮廓、发型、肤色和整体形象高度一致。
+增强脸部一致性，确保与原图相同的面部特征、比例与辨识度。
+进行适度去除皮肤瑕疵，自然美颜但不过度，保持真实质感。
+人物头部角度必须自然稳定，禁止生成正90度侧脸或极端侧脸。
+确保手部结构正常，手指数量正确，不得生成多余手指、六根手指、畸形手部或不自然的手势。
+背景场景：东京涩谷十字路口、浅草寺、东京塔、新宿御苑（随机生成四种不同场景）。，使人物与背景自然融合：光影一致、色彩统一、景深协调，整体呈现照片级超写实风格。
+
+
+人物服装：提供的服饰图片。
+
+人物姿势可根据场景做自然变化，但必须保持合理的人体结构和正常比例。
+整体风格：超写实、高清、自然色调、真实空气感、柔和氛围光。
+一次性生成四张不同构图和场景的高清照片，供选择。
+2025-11-28 16:21:45 [INFO    ] [generation_Image.py:104] 添加人物原图: 来源=前端上传
+2025-11-28 16:21:45 [INFO    ] [generation_Image.py:124] 添加服装图片: 性别=MALE, 上装ID=0, 下装ID=1, 来源=本地文件
+2025-11-28 16:21:45 [INFO    ] [generation_Image.py:139] 输入图片总数: 3 张（1张人物 + 2张服装）
+2025-11-28 16:21:45 [INFO    ] [llm.py:209]   Base URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 16:21:45 [INFO    ] [llm.py:210]   API Key: 已配置
+2025-11-28 16:21:45 [INFO    ] [llm.py:211]   Model ID: doubao-seedream-4-0-250828
+2025-11-28 16:21:45 [INFO    ] [llm.py:220]  OpenAI 客户端创建成功
+2025-11-28 16:22:46 [INFO    ] [_client.py:1025] HTTP Request: POST http://dragon-open-api-test.didainternal.com/api/v3/images/generations "HTTP/1.1 504 Gateway Time-out"
+2025-11-28 16:22:46 [INFO    ] [_base_client.py:1071] Retrying request to /images/generations in 0.498397 seconds
+2025-11-28 16:23:36 [INFO    ] [_client.py:1025] HTTP Request: POST http://dragon-open-api-test.didainternal.com/api/v3/images/generations "HTTP/1.1 200 OK"
+2025-11-28 16:23:36 [INFO    ] [llm.py:248] 开始接收流式响应...
+2025-11-28 16:23:36 [INFO    ] [llm.py:257] Event 1: type=ImageGenPartialImageEvent
+2025-11-28 16:23:36 [INFO    ] [llm.py:262] Event 1: event_type=image_generation.partial_succeeded
+2025-11-28 16:23:36 [INFO    ] [llm.py:275] recv b64_json: index=0, size=1421020
+2025-11-28 16:24:20 [INFO    ] [llm.py:257] Event 2: type=ImageGenPartialImageEvent
+2025-11-28 16:24:20 [INFO    ] [llm.py:262] Event 2: event_type=image_generation.partial_succeeded
+2025-11-28 16:24:20 [INFO    ] [llm.py:275] recv b64_json: index=1, size=1586756
+2025-11-28 16:24:20 [INFO    ] [llm.py:257] Event 3: type=ImageGenPartialImageEvent
+2025-11-28 16:24:20 [INFO    ] [llm.py:262] Event 3: event_type=image_generation.partial_succeeded
+2025-11-28 16:24:20 [INFO    ] [llm.py:275] recv b64_json: index=2, size=1212432
+2025-11-28 16:24:39 [INFO    ] [llm.py:257] Event 4: type=ImageGenPartialImageEvent
+2025-11-28 16:24:39 [INFO    ] [llm.py:262] Event 4: event_type=image_generation.partial_succeeded
+2025-11-28 16:24:39 [INFO    ] [llm.py:275] recv b64_json: index=3, size=1852936
+2025-11-28 16:24:39 [INFO    ] [llm.py:257] Event 5: type=ImageGenCompletedEvent
+2025-11-28 16:24:39 [INFO    ] [llm.py:262] Event 5: event_type=image_generation.completed
+2025-11-28 16:24:39 [INFO    ] [llm.py:294] Final completed event
+2025-11-28 16:24:39 [INFO    ] [llm.py:296] recv.Usage: Usage(input_tokens=None, input_tokens_details=None, output_tokens=64896, total_tokens=64896, generated_images=4)
+2025-11-28 16:24:39 [INFO    ] [llm.py:306] 流式响应结束，共收到 5 个事件
+2025-11-28 16:51:22 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 16:51:22 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 16:51:23 [INFO    ] [journey_poster.py:32] Journey Poster 服务正在启动...
+2025-11-28 16:51:23 [INFO    ] [journey_poster.py:35] Journey Poster 服务启动 - 环境: dev
+2025-11-28 16:51:23 [INFO    ] [journey_poster.py:38] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 16:51:23 [INFO    ] [journey_poster.py:39] LLM_API_KEY: 已配置
+2025-11-28 16:51:23 [INFO    ] [journey_poster.py:40] LLM_SCENE_ID: doubao-seedream-4-0-250828
+2025-11-28 16:51:23 [INFO    ] [journey_poster.py:44] 火山豆包初始化成功
+2025-11-28 16:51:23 [INFO    ] [journey_poster.py:48] Journey Poster 服务启动完成
+2025-11-28 16:51:49 [INFO    ] [generation_Image.py:94] 拼装提示词：将用户人物从原图中进行干净、精细的抠图，保持人物五官特征、脸型轮廓、发型、肤色和整体形象高度一致。
+增强脸部一致性，确保与原图相同的面部特征、比例与辨识度。
+进行适度去除皮肤瑕疵，自然美颜但不过度，保持真实质感。
+人物头部角度必须自然稳定，禁止生成正90度侧脸或极端侧脸。
+确保手部结构正常，手指数量正确，不得生成多余手指、六根手指、畸形手部或不自然的手势。
+背景场景：东京涩谷十字路口、浅草寺、东京塔、新宿御苑（随机生成四种不同场景）。，使人物与背景自然融合：光影一致、色彩统一、景深协调，整体呈现照片级超写实风格。
+
+
+人物服装：提供的服饰图片。
+
+人物姿势可根据场景做自然变化，但必须保持合理的人体结构和正常比例。
+整体风格：超写实、高清、自然色调、真实空气感、柔和氛围光。
+一次性生成四张不同构图和场景的高清照片，供选择。
+2025-11-28 16:51:49 [INFO    ] [generation_Image.py:104] 添加人物原图: 来源=前端上传
+2025-11-28 16:51:49 [INFO    ] [generation_Image.py:124] 添加服装图片: 性别=MALE, 上装ID=0, 下装ID=1, 来源=本地文件
+2025-11-28 16:51:49 [INFO    ] [generation_Image.py:139] 输入图片总数: 3 张（1张人物 + 2张服装）
+2025-11-28 16:51:49 [INFO    ] [llm.py:209]   Base URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 16:51:49 [INFO    ] [llm.py:210]   API Key: 已配置
+2025-11-28 16:51:49 [INFO    ] [llm.py:211]   Model ID: doubao-seedream-4-0-250828
+2025-11-28 16:51:49 [INFO    ] [llm.py:220]  OpenAI 客户端创建成功
+2025-11-28 16:52:34 [INFO    ] [_client.py:1025] HTTP Request: POST http://dragon-open-api-test.didainternal.com/api/v3/images/generations "HTTP/1.1 200 OK"
+2025-11-28 16:52:34 [INFO    ] [llm.py:248] 开始接收流式响应...
+2025-11-28 16:52:35 [INFO    ] [llm.py:257] Event 1: type=ImageGenPartialImageEvent
+2025-11-28 16:52:35 [INFO    ] [llm.py:262] Event 1: event_type=image_generation.partial_succeeded
+2025-11-28 16:52:35 [INFO    ] [llm.py:275] recv b64_json: index=0, size=1686912
+2025-11-28 16:52:52 [INFO    ] [llm.py:257] Event 2: type=ImageGenPartialImageEvent
+2025-11-28 16:52:52 [INFO    ] [llm.py:262] Event 2: event_type=image_generation.partial_succeeded
+2025-11-28 16:52:52 [INFO    ] [llm.py:275] recv b64_json: index=1, size=1775152
+2025-11-28 16:53:10 [INFO    ] [llm.py:257] Event 3: type=ImageGenPartialImageEvent
+2025-11-28 16:53:10 [INFO    ] [llm.py:262] Event 3: event_type=image_generation.partial_succeeded
+2025-11-28 16:53:10 [INFO    ] [llm.py:275] recv b64_json: index=2, size=1322164
+2025-11-28 16:53:46 [INFO    ] [llm.py:257] Event 4: type=ImageGenPartialImageEvent
+2025-11-28 16:53:46 [INFO    ] [llm.py:262] Event 4: event_type=image_generation.partial_succeeded
+2025-11-28 16:53:46 [INFO    ] [llm.py:275] recv b64_json: index=3, size=1698860
+2025-11-28 16:53:46 [INFO    ] [llm.py:257] Event 5: type=ImageGenCompletedEvent
+2025-11-28 16:53:46 [INFO    ] [llm.py:262] Event 5: event_type=image_generation.completed
+2025-11-28 16:53:46 [INFO    ] [llm.py:294] Final completed event
+2025-11-28 16:53:46 [INFO    ] [llm.py:296] recv.Usage: Usage(input_tokens=None, input_tokens_details=None, output_tokens=64896, total_tokens=64896, generated_images=4)
+2025-11-28 16:53:46 [INFO    ] [llm.py:306] 流式响应结束，共收到 5 个事件
+2025-11-28 16:53:46 [INFO    ] [journey_poster.py:240] 流式推送图片 1/4
+2025-11-28 16:53:46 [INFO    ] [journey_poster.py:240] 流式推送图片 2/4
+2025-11-28 16:53:46 [INFO    ] [journey_poster.py:240] 流式推送图片 3/4
+2025-11-28 16:53:46 [INFO    ] [journey_poster.py:240] 流式推送图片 4/4
+2025-11-28 16:53:46 [INFO    ] [journey_poster.py:244] 流式生成完成，共生成 4 张图片

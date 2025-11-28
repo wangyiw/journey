@@ -1,7 +1,7 @@
 # 提供 fastapi接口
 from fastapi import FastAPI, HTTPException, Request, status as http_status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any
@@ -10,8 +10,10 @@ import logging
 from datetime import datetime
 import uvicorn
 import asyncio
+import json
 from setting import settings, ENV
 from core.llm import LLMModel
+from core.llm import LLMConf
 from dto.createPictureReqDto import CreatePictureReqDto
 from dto.createPictureRespDto import CreatePictureRespDto
 from service.generation_Image import doubao_images
@@ -195,7 +197,6 @@ async def createPicture(createPictureReqDto: CreatePictureReqDto) -> CreatePictu
     for attempt in range(max_retries):
         try:
             # 1. 创建 LLM 配置并实例化
-            from core.llm import LLMConf
             llm_conf = LLMConf()
             return await doubao_images(llm_conf).createPicture(createPictureReqDto)
             
@@ -208,7 +209,57 @@ async def createPicture(createPictureReqDto: CreatePictureReqDto) -> CreatePictu
             # 等待一秒后重试
             await asyncio.sleep(1)
         
+@app.post("/createPictureStream", tags=["图生图接口"])
+async def createPictureStream(createPictureReqDto: CreatePictureReqDto):
+    """
+    流式图片生成接口
+    
+    实时返回生成的图片，每生成一张就立即推送到前端。
+    使用 Server-Sent Events (SSE) 格式返回。
+    
+    **参数说明：**
+    - 与 /createPicture 接口相同
+    
+    **返回格式：**
+    - Content-Type: text/event-stream
+    - 每张图片作为一个 SSE 事件返回
+    - 事件格式: data: {"index": 0, "base64": "data:image/..."}
+    """
+    async def generateImagesStream():
+        try:
+            # 调用 doubao_images.createPicture，它内部已经调用了流式生图方法
+            llm_conf = LLMConf()
+            result = await doubao_images(llm_conf).createPicture(createPictureReqDto)
+            
+            # 将返回的图片逐个推送给前端
+            for image_item in result.images:
+                data = {
+                    "index": image_item.id,
+                    "base64": image_item.base64
+                }
+                logger.info(f"流式推送图片 {image_item.id + 1}/{len(result.images)}")
+                yield f"data: {json.dumps(data)}\n\n"
+            
+            # 发送完成事件
+            logger.info(f"流式生成完成，共生成 {len(result.images)} 张图片")
+            yield f"data: {json.dumps({'status': 'completed', 'total': len(result.images)})}\n\n"
         
+        except Exception as e:
+            logger.error(f"流式生成异常: {e}")
+            import traceback
+            traceback.print_exc()
+            error_data = json.dumps({"error": str(e)})
+            yield f"data: {error_data}\n\n"
+    
+    return StreamingResponse(
+        generateImagesStream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
+    )
         
 
 

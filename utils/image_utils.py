@@ -193,9 +193,43 @@ def load_local_image_to_base64(file_path: Union[str, Path]) -> str:
     return f"data:{mime_type};base64,{base64_data}"
 
 
+# 服装样式ID映射表
+# 样式ID编码规则：XYY
+# - X: 性别+类别（0=男上装, 1=女上装, 2=男下装, 3=女下装, 4=连衣裙）
+# - YY: 服装编号（01-99）
+CLOTHES_STYLE_MAPPING = {
+    # 男上装 (0XX)
+    1: "male_top_01.jpg",
+    2: "male_top_02.jpg",
+    
+    # 女上装 (1XX)
+    101: "female_top_01.jpg",
+    102: "female_top_02.jpg",
+    
+    # 男下装 (2XX)
+    201: "male_bottom_01.jpg",
+    202: "male_bottom_02.jpg",
+    
+    # 女下装 (3XX)
+    301: "female_bottom_01.jpg",
+    302: "female_bottom_02.jpg",
+    
+    # 连衣裙 (4XX)
+    401: "dress_01.jpg",
+    402: "dress_02.jpg",
+}
+
+
 def load_clothes_image(sex: int, upper_style_id: int = None, lower_style_id: int = None, dress_id: int = None) -> List[str]:
     """
     根据性别和样式ID加载服装图片
+    
+    样式ID编码规则：
+    - 男上装: 001-099
+    - 女上装: 101-199
+    - 男下装: 201-299
+    - 女下装: 301-399
+    - 连衣裙: 401-499
     
     Args:
         sex: 性别（0=男，1=女）
@@ -208,15 +242,15 @@ def load_clothes_image(sex: int, upper_style_id: int = None, lower_style_id: int
         
     Raises:
         FileNotFoundError: 图片文件不存在
-        ValueError: 参数错误
+        ValueError: 参数错误或样式ID不存在
         
     Example:
         >>> # 男性上装+下装
-        >>> load_clothes_image(sex=0, upper_style_id=101, lower_style_id=201)
+        >>> load_clothes_image(sex=0, upper_style_id=1, lower_style_id=201)
         ['data:image/jpeg;base64,...', 'data:image/jpeg;base64,...']
         
         >>> # 女性连衣裙
-        >>> load_clothes_image(sex=1, dress_id=301)
+        >>> load_clothes_image(sex=1, dress_id=401)
         ['data:image/jpeg;base64,...']
     """
     # 获取服装图片根目录
@@ -230,7 +264,7 @@ def load_clothes_image(sex: int, upper_style_id: int = None, lower_style_id: int
         if upper_style_id is None or lower_style_id is None:
             raise ValueError("男性必须同时选择上装和下装")
     elif sex == 1:  # 女性
-        gender_dir = clothes_dir / "male" / "female"  # 根据你的实际目录结构
+        gender_dir = clothes_dir / "male" / "female"
         # 连衣裙和上下装二选一
         has_dress = dress_id is not None
         has_upper_lower = upper_style_id is not None or lower_style_id is not None
@@ -245,26 +279,27 @@ def load_clothes_image(sex: int, upper_style_id: int = None, lower_style_id: int
     
     # 加载连衣裙
     if dress_id is not None:
-        dress_file = gender_dir / f"female_dress_{dress_id}.jpg"
-        if not dress_file.exists():
-            # 尝试其他可能的命名
-            dress_file = gender_dir / f"dress_{dress_id}.jpg"
+        if dress_id not in CLOTHES_STYLE_MAPPING:
+            raise ValueError(f"连衣裙样式ID {dress_id} 不存在，请检查映射表")
+        
+        filename = CLOTHES_STYLE_MAPPING[dress_id]
+        dress_file = gender_dir / filename
         result.append(load_local_image_to_base64(dress_file))
     
     # 加载上装+下装
     if upper_style_id is not None and lower_style_id is not None:
-        # 根据性别确定文件前缀
-        prefix = "male" if sex == 0 else "female"
+        # 验证样式ID是否存在
+        if upper_style_id not in CLOTHES_STYLE_MAPPING:
+            raise ValueError(f"上装样式ID {upper_style_id} 不存在，请检查映射表")
+        if lower_style_id not in CLOTHES_STYLE_MAPPING:
+            raise ValueError(f"下装样式ID {lower_style_id} 不存在，请检查映射表")
         
-        # 上装文件
-        upper_file = gender_dir / f"{prefix}_clothes.jpg"
-        if not upper_file.exists():
-            upper_file = gender_dir / f"{prefix}_top_{upper_style_id}.jpg"
+        # 根据映射表获取文件名
+        upper_filename = CLOTHES_STYLE_MAPPING[upper_style_id]
+        lower_filename = CLOTHES_STYLE_MAPPING[lower_style_id]
         
-        # 下装文件
-        lower_file = gender_dir / f"{prefix}_pants.jpg"
-        if not lower_file.exists():
-            lower_file = gender_dir / f"{prefix}_bottom_{lower_style_id}.jpg"
+        upper_file = gender_dir / upper_filename
+        lower_file = gender_dir / lower_filename
         
         result.append(load_local_image_to_base64(upper_file))
         result.append(load_local_image_to_base64(lower_file))

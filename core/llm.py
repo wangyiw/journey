@@ -166,12 +166,12 @@ class LLMModel:
             logger.error(e, error_msg)
             raise
 
-    async def createPictureBySeedReam(self, InputImageList: List[str], prompt: str) -> List[str]:
+    async def createPictureBySeedReam(self, InputImageList: List[str], SystemPrompt: str) -> List[str]:
         """
         调用豆包生图接口，stream 图生图（使用 OpenAI SDK）
         input：
             InputImageList: 输入图片列表（Base64编码）
-            prompt: 提示词
+            SystemPrompt: 系统提示词
         output:
             List[str]: 生成的四张图片 Base64 编码列表
             
@@ -226,7 +226,7 @@ class LLMModel:
             # 豆包特有参数通过 extra_body 传递
             stream = client.images.generate(
                 model=model_id,
-                prompt=prompt,
+                prompt=SystemPrompt,
                 size="2K",
                 response_format="b64_json",  # 使用 b64_json 格式接收 Base64 数据
                 stream=True,

@@ -6,6 +6,7 @@ from dto.createPictureRespDto import CreatePictureRespDto
 from core.enum import CityEnum, ModeEnum, GenderEnum
 from core.exceptions import CommonException, ParamException, ErrorCode
 from core.prompt_strategy import generate_prompt_by_request
+from dto.createPictureRespDto import ImageItem
 from utils.image_utils import validate_image_format, validate_image_constraints, load_clothes_image
 from utils.logger import logger
 import logging
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class doubao_images(LLMModel):
     """
-    在这里完成图生图接口的逻辑
+    生图相关方法
     """
     async def verifyInputImage(self, inputImageBase64: str):
         """
@@ -78,8 +79,8 @@ class doubao_images(LLMModel):
             raise CommonException(message="城市不存在")
         if requestDto.mode not in ModeEnum:
             raise CommonException(message="mode参数错误")
-        if requestDto.sex not in GenderEnum:
-            raise CommonException(message="sex参数错误")
+        if requestDto.gender not in GenderEnum:
+            raise CommonException(message="gender参数错误")
         if requestDto.mode == ModeEnum.EASY and requestDto.clothes is None:
             raise CommonException(message="轻松模式下必须提供服装参数")
         if requestDto.mode == ModeEnum.MASTER and requestDto.master_mode_tags is None:
@@ -144,11 +145,13 @@ class doubao_images(LLMModel):
         await self.verifyImageQuality(outputImageBase64List)
 
         # 6.封装dto响应体返回
-        createPictureRespDto = CreatePictureRespDto()
-        createPictureRespDto.images = outputImageBase64List
-        createPictureRespDto.city = requestDto.city
-        createPictureRespDto.mode = requestDto.mode
-        return createPictureRespDto
+        
+        images = [
+            ImageItem(id=idx, base64=img_base64)
+            for idx, img_base64 in enumerate(outputImageBase64List)
+        ]
+        
+        return CreatePictureRespDto(images=images)
 
 
 

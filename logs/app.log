@@ -645,3 +645,51 @@ components.schemas.CreatePictureRespDto.Reference.$ref
 2025-11-28 15:02:14 [INFO    ] [journey_poster.py:38] LLM_SCENE_ID: doubao-seedream-4-0-250828
 2025-11-28 15:02:14 [INFO    ] [journey_poster.py:42] 火山豆包初始化成功
 2025-11-28 15:02:14 [INFO    ] [journey_poster.py:46] Journey Poster 服务启动完成
+2025-11-28 15:21:59 [INFO    ] [journey_poster.py:53] Journey Poster 服务正在关闭
+2025-11-28 15:21:59 [INFO    ] [journey_poster.py:57] 清理服务资源
+2025-11-28 15:21:59 [INFO    ] [journey_poster.py:61] Journey Poster 服务关闭完成
+2025-11-28 15:22:02 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 15:22:02 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 15:22:02 [INFO    ] [journey_poster.py:30] Journey Poster 服务正在启动...
+2025-11-28 15:22:02 [INFO    ] [journey_poster.py:33] Journey Poster 服务启动 - 环境: dev
+2025-11-28 15:22:02 [INFO    ] [journey_poster.py:36] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 15:22:02 [INFO    ] [journey_poster.py:37] LLM_API_KEY: 已配置
+2025-11-28 15:22:02 [INFO    ] [journey_poster.py:38] LLM_SCENE_ID: doubao-seedream-4-0-250828
+2025-11-28 15:22:02 [INFO    ] [journey_poster.py:42] 火山豆包初始化成功
+2025-11-28 15:22:02 [INFO    ] [journey_poster.py:46] Journey Poster 服务启动完成
+2025-11-28 15:25:51 [INFO    ] [journey_poster.py:53] Journey Poster 服务正在关闭
+2025-11-28 15:25:51 [INFO    ] [journey_poster.py:57] 清理服务资源
+2025-11-28 15:25:51 [INFO    ] [journey_poster.py:61] Journey Poster 服务关闭完成
+2025-11-28 15:25:54 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 15:25:54 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 15:25:55 [INFO    ] [journey_poster.py:30] Journey Poster 服务正在启动...
+2025-11-28 15:25:55 [INFO    ] [journey_poster.py:33] Journey Poster 服务启动 - 环境: dev
+2025-11-28 15:25:55 [INFO    ] [journey_poster.py:36] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 15:25:55 [INFO    ] [journey_poster.py:37] LLM_API_KEY: 已配置
+2025-11-28 15:25:55 [INFO    ] [journey_poster.py:38] LLM_SCENE_ID: doubao-seedream-4-0-250828
+2025-11-28 15:25:55 [INFO    ] [journey_poster.py:42] 火山豆包初始化成功
+2025-11-28 15:25:55 [INFO    ] [journey_poster.py:46] Journey Poster 服务启动完成
+2025-11-28 15:28:00 [INFO    ] [journey_poster.py:53] Journey Poster 服务正在关闭
+2025-11-28 15:28:00 [INFO    ] [journey_poster.py:57] 清理服务资源
+2025-11-28 15:28:00 [INFO    ] [journey_poster.py:61] Journey Poster 服务关闭完成
+2025-11-28 15:29:19 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 15:29:19 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 15:29:20 [INFO    ] [journey_poster.py:30] Journey Poster 服务正在启动...
+2025-11-28 15:29:20 [INFO    ] [journey_poster.py:33] Journey Poster 服务启动 - 环境: dev
+2025-11-28 15:29:20 [INFO    ] [journey_poster.py:36] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 15:29:20 [INFO    ] [journey_poster.py:37] LLM_API_KEY: 已配置
+2025-11-28 15:29:20 [INFO    ] [journey_poster.py:38] LLM_SCENE_ID: doubao-seedream-4-0-250828
+2025-11-28 15:29:20 [INFO    ] [journey_poster.py:42] 火山豆包初始化成功
+2025-11-28 15:29:20 [INFO    ] [journey_poster.py:46] Journey Poster 服务启动完成
+2025-11-28 15:37:45 [INFO    ] [journey_poster.py:53] Journey Poster 服务正在关闭
+2025-11-28 15:37:45 [INFO    ] [journey_poster.py:57] 清理服务资源
+2025-11-28 15:37:45 [INFO    ] [journey_poster.py:61] Journey Poster 服务关闭完成
+2025-11-28 16:03:35 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 16:03:35 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 16:03:35 [INFO    ] [journey_poster.py:30] Journey Poster 服务正在启动...
+2025-11-28 16:03:35 [INFO    ] [journey_poster.py:33] Journey Poster 服务启动 - 环境: dev
+2025-11-28 16:03:35 [INFO    ] [journey_poster.py:36] LLM_URL: http://dragon-open-api-test.didainternal.com/api/v3
+2025-11-28 16:03:35 [INFO    ] [journey_poster.py:37] LLM_API_KEY: 已配置
+2025-11-28 16:03:35 [INFO    ] [journey_poster.py:38] LLM_SCENE_ID: doubao-seedream-4-0-250828
+2025-11-28 16:03:35 [INFO    ] [journey_poster.py:42] 火山豆包初始化成功
+2025-11-28 16:03:35 [INFO    ] [journey_poster.py:46] Journey Poster 服务启动完成

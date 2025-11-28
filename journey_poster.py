@@ -71,7 +71,7 @@ app = FastAPI(
 )
 
 # 统一响应处理函数
-async def process_response(data: Dict[str, Any], status: int = 200, success: bool = True, message: Optional[str] = None) -> JSONResponse:
+async def processResponse(data: Dict[str, Any], status: int = 200, success: bool = True, message: Optional[str] = None) -> JSONResponse:
     """
     统一处理API响应
     
@@ -163,17 +163,17 @@ async def exception_middleware(request: Request, call_next):
 @app.get("/")
 async def root():
     data = {"service": "journey poster service", "version": "1.0.0"}
-    return await process_response(data, message="journey poster service 运行正常")
+    return await processResponse(data, message="journey poster service 运行正常")
 
 
 @app.get("/health", tags=["Health"])
-async def health_check():
+async def healthCheck():
     logger.debug("Health check requested")
     data = {"timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-    return await process_response(data, message="healthy")
+    return await processResponse(data, message="healthy")
 
 @app.post("/createPicture", tags=["图生图接口"])
-async def create_picture(createPictureReqDto: CreatePictureReqDto) -> CreatePictureRespDto:
+async def createPicture(createPictureReqDto: CreatePictureReqDto) -> CreatePictureRespDto:
     """
     图片生图接口
     
@@ -209,9 +209,6 @@ async def create_picture(createPictureReqDto: CreatePictureReqDto) -> CreatePict
         
         
 
-    
-
-    
 
 # ==================== 主程序入口 ====================
 

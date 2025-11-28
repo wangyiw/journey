@@ -124,7 +124,7 @@ class CreatePictureReqDto(BaseModel):
     
     master_mode_tags: Optional[MasterModeTags] = Field(
         None,
-        description="大师模式标签配置（大师模式下可选，轻松模式下忽略）upperStyle: 101, lowerStyle: 201, dress: None"
+        description="大师模式标签配置（大师模式下可选，轻松模式下忽略）"
     )
     
     @field_validator('clothes')
@@ -199,11 +199,12 @@ class CreatePictureReqDto(BaseModel):
                     "originPicBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
                     "city": 1,
                     "gender": 1,
-                    "mode": 0,
-                    "clothes": {
-                        "upperStyle": None,
-                        "lowerStyle": None,
-                        "dress": 301
+                    "mode": 1,
+                    "master_mode_tags": {
+                        "style": 0,      
+                        "material": 1,   
+                        "color": 2,      
+                        "type": 0        
                     }
                 }
             ]

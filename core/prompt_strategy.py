@@ -119,7 +119,7 @@ class PromptStrategyFactory:
             raise ValueError(f"不支持的模式: {mode}")
 
 
-def generatePromptByRequest(request_dto: CreatePictureReqDto) -> str:
+def generate_prompt_by_request(request_dto: CreatePictureReqDto) -> str:
     """
     根据请求DTO生成提示词（对外统一接口）
     
@@ -140,7 +140,7 @@ def generatePromptByRequest(request_dto: CreatePictureReqDto) -> str:
         ...     mode=ModeEnum.EASY,
         ...     clothes={"items": [...]}
         ... )
-        >>> prompt = generatePromptByRequest(request)
+        >>> prompt = generate_prompt_by_request(request)
         >>> print(prompt)
     """
     strategy = PromptStrategyFactory.get_strategy(request_dto.mode)

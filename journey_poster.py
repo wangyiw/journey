@@ -16,7 +16,7 @@ from core.llm import LLMModel
 from core.llm import LLMConf
 from dto.createPictureReqDto import CreatePictureReqDto
 from dto.createPictureRespDto import CreatePictureRespDto
-from service.generation_Image import doubao_images
+from service.generation_Image import DoubaoImages
 from core.exceptions import CommonException
 
 # 初始化日志
@@ -73,7 +73,7 @@ app = FastAPI(
 )
 
 # 统一响应处理函数
-async def processResponse(data: Dict[str, Any], status: int = 200, success: bool = True, message: Optional[str] = None) -> JSONResponse:
+async def process_response(data: Dict[str, Any], status: int = 200, success: bool = True, message: Optional[str] = None) -> JSONResponse:
     """
     统一处理API响应
     
@@ -165,17 +165,17 @@ async def exception_middleware(request: Request, call_next):
 @app.get("/")
 async def root():
     data = {"service": "journey poster service", "version": "1.0.0"}
-    return await processResponse(data, message="journey poster service 运行正常")
+    return await process_response(data, message="journey poster service 运行正常")
 
 
 @app.get("/health", tags=["Health"])
-async def healthCheck():
+async def health_check():
     logger.debug("Health check requested")
     data = {"timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-    return await processResponse(data, message="healthy")
+    return await process_response(data, message="healthy")
 
 @app.post("/createPicture", tags=["图生图接口"])
-async def createPicture(createPictureReqDto: CreatePictureReqDto) -> CreatePictureRespDto:
+async def create_picture(createPictureReqDto: CreatePictureReqDto) -> CreatePictureRespDto:
     """
     图片生图接口
     
@@ -198,7 +198,7 @@ async def createPicture(createPictureReqDto: CreatePictureReqDto) -> CreatePictu
         try:
             # 1. 创建 LLM 配置并实例化
             llm_conf = LLMConf()
-            return await doubao_images(llm_conf).createPicture(createPictureReqDto)
+            return await DoubaoImages(llm_conf).create_picture(createPictureReqDto)
             
         except Exception as e:
             logger.error(f"图生图接口异常, 第 {attempt + 1} 次尝试失败: {e}")
@@ -210,7 +210,7 @@ async def createPicture(createPictureReqDto: CreatePictureReqDto) -> CreatePictu
             await asyncio.sleep(1)
         
 @app.post("/createPictureStream", tags=["图生图接口"])
-async def createPictureStream(createPictureReqDto: CreatePictureReqDto):
+async def create_picture_stream(createPictureReqDto: CreatePictureReqDto):
     """
     流式图片生成接口
     
@@ -230,7 +230,7 @@ async def createPictureStream(createPictureReqDto: CreatePictureReqDto):
         for attempt in range(max_retries):
             try:
                 llm_conf = LLMConf()
-                async for chunk in doubao_images(llm_conf).createPictureStream(createPictureReqDto):
+                async for chunk in DoubaoImages(llm_conf).create_picture_stream(createPictureReqDto):
                     yield chunk
                 return
             except Exception as e:

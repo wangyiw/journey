@@ -5,7 +5,7 @@ from dto.createPictureReqDto import CreatePictureReqDto
 from dto.createPictureRespDto import CreatePictureRespDto
 from core.enum import CityEnum, ModeEnum, GenderEnum
 from core.exceptions import CommonException, ParamException, ErrorCode
-from core.prompt_strategy import generatePromptByRequest
+from core.prompt_strategy import generate_prompt_by_request
 from dto.createPictureRespDto import ImageItem
 from utils.image_utils import validate_image_format, validate_image_constraints, load_clothes_image
 from utils.logger import logger
@@ -15,11 +15,11 @@ import json
 logger = logging.getLogger(__name__)
 
 
-class doubao_images(LLMModel):
+class DoubaoImages(LLMModel):
     """
     生图相关方法
     """
-    async def verifyInputImage(self, inputImageBase64: str):
+    async def verify_input_image(self, inputImageBase64: str):
         """
         校验输入图片格式和约束条件
         
@@ -50,7 +50,7 @@ class doubao_images(LLMModel):
         
         return True
     
-    async def verifyImageQuality(self, outputImageBase64List: List[str]):
+    async def verify_image_quality(self, outputImageBase64List: List[str]):
         """
         校验生成图片质量
         
@@ -70,7 +70,7 @@ class doubao_images(LLMModel):
         
         return True
 
-    async def verifyInputData(self, requestDto: CreatePictureReqDto):
+    async def verify_input_data(self, requestDto: CreatePictureReqDto):
         """
         校验输入参数
         添加更多入参校验逻辑
@@ -87,17 +87,17 @@ class doubao_images(LLMModel):
             raise CommonException(message="大师模式下必须提供标签参数")
 
 
-    async def createPicture(self, requestDto: CreatePictureReqDto)->CreatePictureRespDto:
+    async def create_picture(self, requestDto: CreatePictureReqDto)->CreatePictureRespDto:
         """
         图生图主逻辑
         """
-        await self.verifyInputData(requestDto)
+        await self.verify_input_data(requestDto)
 
         # 2.验证输入图片格式
-        await self.verifyInputImage(requestDto.originPicBase64)
+        await self.verify_input_image(requestDto.originPicBase64)
         
         # 3.拼装提示词（使用策略模式）
-        createPicturePrompt = generatePromptByRequest(requestDto)
+        createPicturePrompt = generate_prompt_by_request(requestDto)
         logger.info(f"拼装提示词：{createPicturePrompt}")
         
         # 4.准备输入图片列表
@@ -147,13 +147,13 @@ class doubao_images(LLMModel):
         
         # 5.调用火山豆包生图接口（流式生成器）
         outputImageBase64List = []
-        async for base64_image in self.createPictureBySeedReam(createPictureInputBase64List, createPicturePrompt):
+        async for base64_image in self.create_picture_by_seed_ream(createPictureInputBase64List, createPicturePrompt):
             # 单张图片质量校验（可选）
             # await self.verifySingleImageQuality(base64_image)
             outputImageBase64List.append(base64_image)
         
         # 5.校验生成图片质量（批量校验）
-        await self.verifyImageQuality(outputImageBase64List)
+        await self.verify_image_quality(outputImageBase64List)
 
         # 6.封装dto响应体返回
         images = [
@@ -163,19 +163,19 @@ class doubao_images(LLMModel):
         
         return CreatePictureRespDto(images=images)
     
-    async def createPictureStream(self, requestDto: CreatePictureReqDto):
+    async def create_picture_stream(self, requestDto: CreatePictureReqDto):
         """
         流式图生图 - 生成器方法，用于 SSE 推送
         直接透传底层生成器，每生成一张图片就立即推送
         """
         # 参数校验
-        await self.verifyInputData(requestDto)
+        await self.verify_input_data(requestDto)
 
         # 验证输入图片
-        await self.verifyInputImage(requestDto.originPicBase64)
+        await self.verify_input_image(requestDto.originPicBase64)
         
         # 生成提示词
-        createPicturePrompt = generatePromptByRequest(requestDto)
+        createPicturePrompt = generate_prompt_by_request(requestDto)
         logger.info(f"流式生成 - 提示词：{createPicturePrompt}")
         
         # 准备输入图片列表
@@ -202,7 +202,7 @@ class doubao_images(LLMModel):
         
         # 调用底层生成器，透传每张图片
         image_count = 0
-        async for base64_image in self.createPictureBySeedReam(createPictureInputBase64List, createPicturePrompt):
+        async for base64_image in self.create_picture_by_seed_ream(createPictureInputBase64List, createPicturePrompt):
             data = {
                 "index": image_count,
                 "base64": base64_image

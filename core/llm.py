@@ -166,14 +166,14 @@ class LLMModel:
             logger.error(e, error_msg)
             raise
 
-    async def createPictureBySeedReam(self, InputImageList: List[str], SystemPrompt: str):
+    async def create_picture_by_seed_ream(self, InputImageList: List[str], SystemPrompt: str):
         """
         调用豆包生图接口，stream 图生图（使用 OpenAI SDK）
         input：
             InputImageList: 输入图片列表（Base64编码）
             SystemPrompt: 系统提示词
         output:
-            List[str]: 生成的四张图片 Base64 编码列表
+            AsyncGenerator[str, None]: 逐个 yield 生成的图片 Base64 编码
             
         图片格式要求：
             - Base64格式：data:image/<format>;base64,<base64_data>
@@ -350,7 +350,18 @@ class LLMModel:
                     message=f"AI模型调用失败: {error_msg}",
                     error_code=ErrorCode.LLM_ERROR
                 )
-            
+
+    async def create_picture_stream(self, InputImageList: List[str], SystemPrompt: str) -> AsyncGenerator[str, None]:
+        """
+        调用豆包生图接口，流式返回图片（使用 OpenAI SDK）
+        input：
+            InputImageList: 输入图片列表（Base64编码）
+            SystemPrompt: 系统提示词
+        output:
+            AsyncGenerator[str, None]: 逐个 yield 生成的图片 Base64 编码
+        """
+        async for image in self.create_picture_by_seed_ream(InputImageList, SystemPrompt):
+            yield image
 
     async def close(self):
         """

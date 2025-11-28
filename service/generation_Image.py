@@ -5,11 +5,12 @@ from dto.createPictureReqDto import CreatePictureReqDto
 from dto.createPictureRespDto import CreatePictureRespDto
 from core.enum import CityEnum, ModeEnum, GenderEnum
 from core.exceptions import CommonException, ParamException, ErrorCode
-from core.prompt_strategy import generate_prompt_by_request
+from core.prompt_strategy import generatePromptByRequest
 from dto.createPictureRespDto import ImageItem
 from utils.image_utils import validate_image_format, validate_image_constraints, load_clothes_image
 from utils.logger import logger
 import logging
+import json
     
 logger = logging.getLogger(__name__)
 
@@ -69,12 +70,11 @@ class doubao_images(LLMModel):
         
         return True
 
-
-    async def createPicture(self, requestDto: CreatePictureReqDto)->CreatePictureRespDto:
+    async def verifyInputData(self, requestDto: CreatePictureReqDto):
         """
-        图生图主逻辑
+        校验输入参数
+        添加更多入参校验逻辑
         """
-        # 添加更多入参校验逻辑
         if requestDto.city not in CityEnum:
             raise CommonException(message="城市不存在")
         if requestDto.mode not in ModeEnum:
@@ -86,11 +86,18 @@ class doubao_images(LLMModel):
         if requestDto.mode == ModeEnum.MASTER and requestDto.master_mode_tags is None:
             raise CommonException(message="大师模式下必须提供标签参数")
 
+
+    async def createPicture(self, requestDto: CreatePictureReqDto)->CreatePictureRespDto:
+        """
+        图生图主逻辑
+        """
+        await self.verifyInputData(requestDto)
+
         # 2.验证输入图片格式
         await self.verifyInputImage(requestDto.originPicBase64)
         
         # 3.拼装提示词（使用策略模式）
-        createPicturePrompt = generate_prompt_by_request(requestDto)
+        createPicturePrompt = generatePromptByRequest(requestDto)
         logger.info(f"拼装提示词：{createPicturePrompt}")
         
         # 4.准备输入图片列表
@@ -138,20 +145,75 @@ class doubao_images(LLMModel):
         
         logger.info(f"输入图片总数: {len(createPictureInputBase64List)} 张（1张人物 + {len(createPictureInputBase64List)-1}张服装）")
         
-        # 5.调用火山豆包生图接口
-        outputImageBase64List = await self.createPictureBySeedReam(createPictureInputBase64List, createPicturePrompt)
+        # 5.调用火山豆包生图接口（流式生成器）
+        outputImageBase64List = []
+        async for base64_image in self.createPictureBySeedReam(createPictureInputBase64List, createPicturePrompt):
+            # 单张图片质量校验（可选）
+            # await self.verifySingleImageQuality(base64_image)
+            outputImageBase64List.append(base64_image)
         
-        # 5.校验生成图片质量
+        # 5.校验生成图片质量（批量校验）
         await self.verifyImageQuality(outputImageBase64List)
 
         # 6.封装dto响应体返回
-        
         images = [
             ImageItem(id=idx, base64=img_base64)
             for idx, img_base64 in enumerate(outputImageBase64List)
         ]
         
         return CreatePictureRespDto(images=images)
+    
+    async def createPictureStream(self, requestDto: CreatePictureReqDto):
+        """
+        流式图生图 - 生成器方法，用于 SSE 推送
+        直接透传底层生成器，每生成一张图片就立即推送
+        """
+        # 参数校验
+        await self.verifyInputData(requestDto)
+
+        # 验证输入图片
+        await self.verifyInputImage(requestDto.originPicBase64)
+        
+        # 生成提示词
+        createPicturePrompt = generatePromptByRequest(requestDto)
+        logger.info(f"流式生成 - 提示词：{createPicturePrompt}")
+        
+        # 准备输入图片列表
+        createPictureInputBase64List = [requestDto.originPicBase64]
+        
+        # 轻松模式：加载服装图片
+        if requestDto.mode == ModeEnum.EASY and requestDto.clothes:
+            try:
+                clothes_images = load_clothes_image(
+                    sex=requestDto.gender.value,
+                    upper_style_id=requestDto.clothes.upperStyle,
+                    lower_style_id=requestDto.clothes.lowerStyle,
+                    dress_id=requestDto.clothes.dress
+                )
+                createPictureInputBase64List.extend(clothes_images)
+            except ValueError as e:
+                logger.error(f"加载服装图片失败: {e}")
+                raise ParamException(message=str(e), error_code=ErrorCode.PARAM_INVALID)
+            except FileNotFoundError as e:
+                logger.error(f"服装图片文件不存在: {e}")
+                raise ParamException(message="服装图片文件不存在，请联系管理员", error_code=ErrorCode.RESOURCE_NOT_FOUND)
+        
+        logger.info(f"流式生成 - 输入图片总数: {len(createPictureInputBase64List)} 张")
+        
+        # 调用底层生成器，透传每张图片
+        image_count = 0
+        async for base64_image in self.createPictureBySeedReam(createPictureInputBase64List, createPicturePrompt):
+            data = {
+                "index": image_count,
+                "base64": base64_image
+            }
+            image_count += 1
+            logger.info(f"流式推送图片 {image_count}/4")
+            yield f"data: {json.dumps(data)}\n\n"
+        
+        # 发送完成事件
+        logger.info(f"流式生成完成，共生成 {image_count} 张图片")
+        yield f"data: {json.dumps({'status': 'completed', 'total': image_count})}\n\n"
 
 
 

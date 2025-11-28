@@ -166,7 +166,7 @@ class LLMModel:
             logger.error(e, error_msg)
             raise
 
-    async def createPictureBySeedReam(self, InputImageList: List[str], SystemPrompt: str) -> List[str]:
+    async def createPictureBySeedReam(self, InputImageList: List[str], SystemPrompt: str):
         """
         调用豆包生图接口，stream 图生图（使用 OpenAI SDK）
         input：
@@ -240,11 +240,7 @@ class LLMModel:
                 }
             )
             
-            # 收集流式返回的图片数据
-            images_base64_list = []
-            partial_images = {}  # 用于存储部分图片数据 {index: base64_data}
-            
-            # 遍历流式响应
+            # 流式返回图片数据 - 直接 yield，不再收集到列表
             logger.info("开始接收流式响应...")
             event_count = 0
             for event in stream:
@@ -268,26 +264,18 @@ class LLMModel:
                         break
                         
                 elif event_type == "image_generation.partial_succeeded":
-                    # 图片生成成功
+                    # 图片生成成功，立即 yield
                     if hasattr(event, 'b64_json') and event.b64_json:
-                        # Base64 模式
-                        index = getattr(event, 'index', len(images_base64_list))
-                        logger.info(f"recv b64_json: index={index}, size={len(event.b64_json)}")
                         base64_data = event.b64_json
                         if not base64_data.startswith('data:image'):
                             base64_data = f"data:image/png;base64,{base64_data}"
-                        images_base64_list.append(base64_data)
+                        logger.info(f"收到一张图片，size={len(base64_data)}")
+                        # 直接返回一张
+                        yield base64_data
                     elif hasattr(event, 'url') and event.url:
                         # URL 模式
                         size = getattr(event, 'size', 'unknown')
                         logger.info(f"recv.Size: {size}, recv.Url: {event.url}")
-                        
-                elif event_type == "image_generation.partial_image":
-                    # 接收部分图片的 Base64 数据
-                    if hasattr(event, 'b64_json') and event.b64_json:
-                        index = getattr(event, 'partial_image_index', getattr(event, 'index', len(partial_images)))
-                        logger.info(f"Partial image index={index}, size={len(event.b64_json)}")
-                        partial_images[index] = event.b64_json
                         
                 elif event_type == "image_generation.completed":
                     # 生成完成
@@ -298,41 +286,20 @@ class LLMModel:
                     # 未知事件类型，尝试直接获取图片数据
                     logger.warning(f"Unknown event type: {event_type}")
                     if hasattr(event, 'b64_json') and event.b64_json:
-                        logger.info(f"Found b64_json in unknown event, size={len(event.b64_json)}")
-                        images_base64_list.append(event.b64_json)
+                        base64_data = event.b64_json
+                        if not base64_data.startswith('data:image'):
+                            base64_data = f"data:image/png;base64,{base64_data}"
+                        logger.info(f"Found b64_json in unknown event, yield it, size={len(base64_data)}")
+                        yield base64_data
                     elif hasattr(event, 'data'):
                         logger.info(f"Found data in event: {type(event.data)}")
             
             logger.info(f"流式响应结束，共收到 {event_count} 个事件")
             
-            # 按索引顺序整理图片数据
-            if partial_images:
-                # 从流式响应中收集的 Base64 数据
-                for i in sorted(partial_images.keys()):
-                    base64_data = partial_images[i]
-                    # 确保格式为 data:image/png;base64,<data>
-                    if not base64_data.startswith('data:image'):
-                        base64_data = f"data:image/png;base64,{base64_data}"
-                    images_base64_list.append(base64_data)
-            else:
-                # 如果流式响应没有数据，尝试从 stream.data 获取
-                if hasattr(stream, 'data') and stream.data:
-                    for image in stream.data:
-                        if hasattr(image, 'b64_json') and image.b64_json:
-                            base64_data = image.b64_json
-                            if not base64_data.startswith('data:image'):
-                                base64_data = f"data:image/png;base64,{base64_data}"
-                            images_base64_list.append(base64_data)
-                            logger.info(f"Image size: {len(base64_data)}")
-            
-            if len(images_base64_list) != 4:
-                logger.warning(f"期望生成4张图片，实际生成{len(images_base64_list)}张")
-            
-            return images_base64_list
-            
         except (ParamException, AuthException, LLMException, NetworkException, TimeoutException) as e:
             # 已经是自定义异常，直接抛出
             raise
+        # 捕获其他异常
         except Exception as e:
             error_type = type(e).__name__
             error_msg = str(e)

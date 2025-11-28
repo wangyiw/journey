@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 load_dotenv('.env.dev')
 
 from core.llm import LLMModel, LLMConf
-from core.prompt_strategy import generate_prompt_by_request
+from core.prompt_strategy import generatePromptByRequest
 from core.enum import CityEnum, ModeEnum, GenderEnum, ClothesCategory
 from dto.createPictureReqDto import (
     CreatePictureReqDto,
@@ -98,7 +98,7 @@ async def test_easy_mode():
     
     # 3. 生成提示词
     print("\n3. 生成提示词:")
-    prompt = generate_prompt_by_request(request)
+    prompt = generatePromptByRequest(request)
     print(f"\n{prompt}\n")
     
     # 4. 使用服务层（会自动加载服装图片）

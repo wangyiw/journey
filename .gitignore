@@ -13,5 +13,5 @@ wheels/
 utils\pictures\output
 
 # Logs
-app.logs
+.logs
 

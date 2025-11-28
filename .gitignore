@@ -14,4 +14,6 @@ utils\pictures\output
 
 # Logs
 .logs
+logs/
+*.log
 

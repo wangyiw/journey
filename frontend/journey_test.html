@@ -29,7 +29,6 @@
             gap: 20px;
         }
 
-        /* 左侧控制栏 */
         .sidebar {
             background: var(--card-bg);
             padding: 20px;
@@ -73,7 +72,6 @@
             cursor: pointer;
         }
 
-        /* 动态区域显示控制 */
         .hidden {
             display: none;
         }
@@ -120,7 +118,6 @@
             cursor: not-allowed;
         }
 
-        /* 右侧结果栏 */
         .result-area {
             background: var(--card-bg);
             padding: 20px;
@@ -164,7 +161,6 @@
             transform: scale(1.05);
         }
 
-        /* Loading 动画 */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -207,8 +203,8 @@
             font-family: monospace;
             font-size: 12px;
             white-space: pre-wrap;
-            display: none;
-            /* 默认隐藏,调试可打开 */
+            max-height: 300px;
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -216,7 +212,6 @@
 <body>
 
     <div class="container">
-        <!-- 左侧:参数输入 -->
         <div class="sidebar">
             <h2 style="margin-top:0">配置参数</h2>
 
@@ -265,16 +260,14 @@
             <div class="form-group">
                 <label>模式 (Mode)</label>
                 <div class="radio-group">
-                    <label class="radio-item"><input type="radio" name="mode" value="0" checked> 轻松模式</label>
-                    <label class="radio-item"><input type="radio" name="mode" value="1"> 大师模式</label>
+                    <label class="radio-item"><input type="radio" name="mode" value="0" checked> 轻松模式 (0)</label>
+                    <label class="radio-item"><input type="radio" name="mode" value="1"> 大师模式 (1)</label>
                 </div>
             </div>
 
             <hr style="border-top:1px solid #eee; margin: 15px 0;">
 
-            <!-- 3. 动态配置区域 -->
-
-            <!-- 3.1 轻松模式配置 -->
+            <!-- 3. 轻松模式配置 -->
             <div id="easyModePanel">
                 <h3>服装配置 (Clothes)</h3>
 
@@ -287,73 +280,67 @@
                     </select>
                 </div>
 
-                <!-- 上装 + 下装 (男女通用) -->
+                <!-- 上装 + 下装 -->
                 <div id="splitSuitInputs" class="sub-panel">
                     <div class="form-group">
-                        <label>上装样式 (Upper Style)</label>
-                        <select id="upperStyle">
-                            <option value="0">MALE_TOP - 男上装</option>
-                        </select>
+                        <label>上装样式 (upperStyle)</label>
+                        <input type="number" id="upperStyle" value="0" min="0" placeholder="输入上装样式ID">
                     </div>
                     <div class="form-group">
-                        <label>下装样式 (Lower Style)</label>
-                        <select id="lowerStyle">
-                            <option value="1">MALE_BOTTOM - 男下装</option>
-                        </select>
+                        <label>下装样式 (lowerStyle)</label>
+                        <input type="number" id="lowerStyle" value="1" min="0" placeholder="输入下装样式ID">
                     </div>
                 </div>
 
                 <!-- 连衣裙 (女性专用) -->
                 <div id="dressInputs" class="sub-panel hidden">
                     <div class="form-group">
-                        <label>连衣裙样式 (Dress)</label>
-                        <select id="dressStyle">
-                            <option value="4">DRESS - 连衣裙</option>
-                        </select>
+                        <label>连衣裙样式 (dress)</label>
+                        <input type="number" id="dressStyle" value="4" min="0" placeholder="输入连衣裙样式ID">
                     </div>
                 </div>
             </div>
 
-            <!-- 3.2 大师模式配置 -->
+            <!-- 4. 大师模式配置 -->
             <div id="masterModePanel" class="hidden">
                 <h3>大师标签 (Master Tags)</h3>
                 <div class="sub-panel">
                     <div class="form-group">
-                        <label>风格 (Style)</label>
+                        <label>风格 (style)</label>
                         <select id="masterStyle">
-                            <option value="0">FRENCH_ELEGANT - 法式优雅</option>
-                            <option value="1">JAPANESE_SIMPLE - 日系简约</option>
-                            <option value="2">FUTURE_TECH - 未来科技</option>
-                            <option value="3">AI_RANDOM - AI随机</option>
+                            <option value="0">0 - FRENCH_ELEGANT 法式优雅</option>
+                            <option value="1">1 - JAPANESE_SIMPLE 日系简约</option>
+                            <option value="2">2 - FUTURE_TECH 未来科技</option>
+                            <option value="3">3 - AI_RANDOM AI随机</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>材质 (Material)</label>
+                        <label>材质 (material)</label>
                         <select id="masterMaterial">
-                            <option value="0">DENIM - 牛仔</option>
-                            <option value="1">SILK - 丝绸</option>
-                            <option value="2">COTTON - 棉料</option>
-                            <option value="3">METAL - 金属</option>
-                            <option value="4">AI_RANDOM - AI随机</option>
+                            <option value="0">0 - DENIM 牛仔</option>
+                            <option value="1">1 - SILK 丝绸</option>
+                            <option value="2">2 - COTTON 棉料</option>
+                            <option value="3">3 - METAL 金属</option>
+                            <option value="4">4 - AI_RANDOM AI随机</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>色调 (Color)</label>
+                        <label>色调 (color)</label>
                         <select id="masterColor">
-                            <option value="0">WARM - 暖色调</option>
-                            <option value="1">COLD - 冷色调</option>
-                            <option value="2">NEUTRAL - 中性色调</option>
-                            <option value="3">AI_RANDOM - AI随机</option>
+                            <option value="0">0 - WARM 暖色调</option>
+                            <option value="1">1 - COLD 冷色调</option>
+                            <option value="2">2 - NEUTRAL 中性色调</option>
+                            <option value="3">3 - AI_RANDOM AI随机</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>类型 (Type)</label>
+                        <label>类型 (type)</label>
                         <select id="masterType">
-                            <option value="0">SUIT - 套装</option>
-                            <option value="1">DRESS - 连衣裙</option>
-                            <option value="2">COAT - 外套</option>
-                            <option value="3">LOCAL_COSTUME - 当地特色服饰</option>
-                            <option value="4">AI_RANDOM - AI随机</option>
+                            <option value="0">0 - SUIT 套装</option>
+                            <option value="1">1 - DRESS 连衣裙</option>
+                            <option value="2">2 - COAT 外套</option>
+                            <option value="3">3 - LOCAL_COSTUME 当地特色服饰</option>
+                            <option value="4">4 - AI_RANDOM AI随机</option>
                         </select>
                     </div>
                 </div>
@@ -370,7 +357,6 @@
                 <span id="statusText" style="color: #666">等待提交...</span>
             </div>
             <div id="imageGrid" class="image-grid">
-                <!-- 图片将在这里生成 -->
                 <div class="result-item" style="display:flex;align-items:center;justify-content:center;color:#ccc;">1
                 </div>
                 <div class="result-item" style="display:flex;align-items:center;justify-content:center;color:#ccc;">2
@@ -393,42 +379,28 @@
     </div>
 
     <script>
-        // ================= 配置区域 =================
-        // 请修改为你的后端接口地址
         const API_URL = "http://localhost:8123/createPicture";
-        // ===========================================
-
-        // 状态变量
         let base64Image = "";
 
-        // DOM 元素引用
         const els = {
             fileInput: document.getElementById('fileInput'),
             preview: document.getElementById('preview'),
             city: document.getElementById('citySelect'),
             genderRadios: document.getElementsByName('gender'),
             modeRadios: document.getElementsByName('mode'),
-
-            // Panels
             easyModePanel: document.getElementById('easyModePanel'),
             masterModePanel: document.getElementById('masterModePanel'),
-
-            // Easy Mode Inputs
             femaleTypeSelector: document.getElementById('femaleTypeSelector'),
             femaleClothType: document.getElementById('femaleClothType'),
             splitSuitInputs: document.getElementById('splitSuitInputs'),
             dressInputs: document.getElementById('dressInputs'),
-
             upperStyle: document.getElementById('upperStyle'),
             lowerStyle: document.getElementById('lowerStyle'),
             dressStyle: document.getElementById('dressStyle'),
-
-            // Master Mode Inputs
             masterStyle: document.getElementById('masterStyle'),
             masterMaterial: document.getElementById('masterMaterial'),
             masterColor: document.getElementById('masterColor'),
             masterType: document.getElementById('masterType'),
-
             submitBtn: document.getElementById('submitBtn'),
             loading: document.getElementById('loading'),
             imageGrid: document.getElementById('imageGrid'),
@@ -436,35 +408,22 @@
             debugInfo: document.getElementById('debugInfo')
         };
 
-        // 1. 初始化监听器
         function init() {
-            // 图片上传处理
             els.fileInput.addEventListener('change', handleFileSelect);
-
-            // 模式切换监听
             els.modeRadios.forEach(radio => radio.addEventListener('change', updateUI));
-
-            // 性别切换监听
             els.genderRadios.forEach(radio => radio.addEventListener('change', updateUI));
-
-            // 女性服装类型切换监听
             els.femaleClothType.addEventListener('change', updateUI);
-
-            // 提交按钮
             els.submitBtn.addEventListener('click', handleSubmit);
-
-            // 初始化 UI
             updateUI();
         }
 
-        // 2. 文件转 Base64
         function handleFileSelect(e) {
             const file = e.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function (evt) {
-                base64Image = evt.target.result; // 这里已经包含了 data:image/png;base64,... 前缀
+                base64Image = evt.target.result;
                 els.preview.src = base64Image;
                 els.preview.style.display = 'block';
                 els.submitBtn.disabled = false;
@@ -472,47 +431,33 @@
             reader.readAsDataURL(file);
         }
 
-        // 3. UI 逻辑更新 (核心逻辑)
         function updateUI() {
             const mode = parseInt(document.querySelector('input[name="mode"]:checked').value);
             const gender = parseInt(document.querySelector('input[name="gender"]:checked').value);
 
             // 模式显隐
             if (mode === 0) {
-                // 轻松模式
                 els.easyModePanel.classList.remove('hidden');
                 els.masterModePanel.classList.add('hidden');
             } else {
-                // 大师模式
                 els.easyModePanel.classList.add('hidden');
                 els.masterModePanel.classList.remove('hidden');
-                return; // 大师模式不需要处理下面的服装逻辑
+                return;
             }
 
-            // 服装逻辑 (仅轻松模式)
+            // 服装逻辑
             if (gender === 0) {
                 // 男性
-                els.femaleTypeSelector.classList.add('hidden'); // 隐藏女性类型选择
-                els.splitSuitInputs.classList.remove('hidden'); // 显示上下装
-                els.dressInputs.classList.add('hidden');       // 隐藏连衣裙
-
-                // 更新上装选项为男装
-                els.upperStyle.innerHTML = '<option value="0">MALE_TOP - 男上装</option>';
-                // 更新下装选项为男装
-                els.lowerStyle.innerHTML = '<option value="1">MALE_BOTTOM - 男下装</option>';
+                els.femaleTypeSelector.classList.add('hidden');
+                els.splitSuitInputs.classList.remove('hidden');
+                els.dressInputs.classList.add('hidden');
             } else {
                 // 女性
-                els.femaleTypeSelector.classList.remove('hidden'); // 显示类型选择
-
+                els.femaleTypeSelector.classList.remove('hidden');
                 const clothType = els.femaleClothType.value;
                 if (clothType === 'suit') {
                     els.splitSuitInputs.classList.remove('hidden');
                     els.dressInputs.classList.add('hidden');
-
-                    // 更新上装选项为女装
-                    els.upperStyle.innerHTML = '<option value="2">FEMALE_TOP - 女上装</option>';
-                    // 更新下装选项为女装
-                    els.lowerStyle.innerHTML = '<option value="3">FEMALE_BOTTOM - 女下装</option>';
                 } else {
                     els.splitSuitInputs.classList.add('hidden');
                     els.dressInputs.classList.remove('hidden');
@@ -520,7 +465,6 @@
             }
         }
 
-        // 4. 组装数据并提交
         async function handleSubmit() {
             if (!base64Image) {
                 alert("请先上传一张图片");
@@ -542,27 +486,30 @@
             // 根据模式填充字段
             if (mode === 0) {
                 // 轻松模式 -> 构建 clothes
-                let clothesObj = {
-                    upperStyle: null,
-                    lowerStyle: null,
-                    dress: null
-                };
-
                 if (gender === 0) {
                     // 男性:必须传上下装
-                    clothesObj.upperStyle = parseInt(els.upperStyle.value);
-                    clothesObj.lowerStyle = parseInt(els.lowerStyle.value);
+                    payload.clothes = {
+                        upperStyle: parseInt(els.upperStyle.value),
+                        lowerStyle: parseInt(els.lowerStyle.value),
+                        dress: null
+                    };
                 } else {
                     // 女性
                     const clothType = els.femaleClothType.value;
                     if (clothType === 'suit') {
-                        clothesObj.upperStyle = parseInt(els.upperStyle.value);
-                        clothesObj.lowerStyle = parseInt(els.lowerStyle.value);
+                        payload.clothes = {
+                            upperStyle: parseInt(els.upperStyle.value),
+                            lowerStyle: parseInt(els.lowerStyle.value),
+                            dress: null
+                        };
                     } else {
-                        clothesObj.dress = parseInt(els.dressStyle.value);
+                        payload.clothes = {
+                            upperStyle: null,
+                            lowerStyle: null,
+                            dress: parseInt(els.dressStyle.value)
+                        };
                     }
                 }
-                payload.clothes = clothesObj;
             } else {
                 // 大师模式 -> 构建 master_mode_tags
                 payload.master_mode_tags = {
@@ -573,9 +520,9 @@
                 };
             }
 
-            // 调试显示
-            // els.debugInfo.innerText = JSON.stringify(payload, null, 4);
-            // els.debugInfo.style.display = 'block';
+            // 显示调试信息
+            els.debugInfo.innerText = "请求参数:\n" + JSON.stringify(payload, null, 2);
+            els.debugInfo.style.display = 'block';
 
             // 发起请求
             try {
@@ -590,31 +537,34 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP Error: ${response.status}`);
-                }
-
                 const data = await response.json();
 
-                // 假设后端直接返回 List<String> 或者 { images: [...] }
-                // 根据你的代码返回是 CreatePictureRespDto -> { images: [] }
-                const images = data.images || data; // 兼容处理
+                if (!response.ok) {
+                    throw new Error(data.message || `HTTP Error: ${response.status}`);
+                }
+
+                // 处理返回数据
+                const images = data.data?.images || data.images || [];
 
                 renderImages(images);
                 els.statusText.innerText = `生成成功!(${images.length} 张)`;
+
+                // 显示完整响应
+                els.debugInfo.innerText = "请求参数:\n" + JSON.stringify(payload, null, 2) +
+                    "\n\n响应数据:\n" + JSON.stringify(data, null, 2);
 
             } catch (error) {
                 console.error(error);
                 alert("生成失败: " + error.message);
                 els.statusText.innerText = "生成失败";
+                els.debugInfo.innerText += "\n\n错误信息:\n" + error.message;
             } finally {
                 setLoading(false);
             }
         }
 
-        // 5. 渲染结果
         function renderImages(base64List) {
-            els.imageGrid.innerHTML = ''; // 清空
+            els.imageGrid.innerHTML = '';
 
             if (!base64List || base64List.length === 0) {
                 els.imageGrid.innerHTML = '<div style="grid-column: span 2; text-align:center;">没有返回图片</div>';
@@ -625,15 +575,12 @@
                 const div = document.createElement('div');
                 div.className = 'result-item';
 
-                // 补全前缀如果后端没传
                 let src = b64;
                 if (!src.startsWith('data:image')) {
                     src = 'data:image/png;base64,' + src;
                 }
 
-                div.innerHTML = `
-                    <img src="${src}" onclick="window.open(this.src)" title="点击查看大图">
-                `;
+                div.innerHTML = `<img src="${src}" onclick="window.open(this.src)" title="点击查看大图">`;
                 els.imageGrid.appendChild(div);
             });
         }
@@ -643,7 +590,6 @@
             els.submitBtn.disabled = isLoading;
         }
 
-        // 启动
         init();
     </script>
 </body>

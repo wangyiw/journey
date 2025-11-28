@@ -194,8 +194,10 @@ async def createPicture(createPictureReqDto: CreatePictureReqDto) -> CreatePictu
     max_retries = 2
     for attempt in range(max_retries):
         try:
-            # 1. 直接传对象进去
-            return await doubao_images().createPicture(createPictureReqDto)
+            # 1. 创建 LLM 配置并实例化
+            from core.llm import LLMConf
+            llm_conf = LLMConf()
+            return await doubao_images(llm_conf).createPicture(createPictureReqDto)
             
         except Exception as e:
             logger.error(f"图生图接口异常, 第 {attempt + 1} 次尝试失败: {e}")

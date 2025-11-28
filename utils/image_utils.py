@@ -198,25 +198,30 @@ def load_local_image_to_base64(file_path: Union[str, Path]) -> str:
 # - X: 性别+类别（0=男上装, 1=女上装, 2=男下装, 3=女下装, 4=连衣裙）
 # - YY: 服装编号（01-99）
 CLOTHES_STYLE_MAPPING = {
-    # 男上装 (0XX)
-    1: "male_top_01.jpg",
-    2: "male_top_02.jpg",
+    # 男上装 (0-99) - 对应 utils/pictures/clothes/male/ 下的文件
+    0: "male_clothes.jpg",
+    1: "male_clothes.jpg",  # 暂时都指向同一个文件
+    2: "male_clothes.jpg",
     
-    # 女上装 (1XX)
-    101: "female_top_01.jpg",
-    102: "female_top_02.jpg",
+    # 女上装 (100-199) - 对应 utils/pictures/clothes/female/ 下的文件
+    100: "female_clothes.jpg",
+    101: "female_clothes.jpg",
+    102: "female_clothes.jpg",
     
-    # 男下装 (2XX)
-    201: "male_bottom_01.jpg",
-    202: "male_bottom_02.jpg",
+    # 男下装 (200-299)
+    200: "male_pants.jpg",
+    201: "male_pants.jpg",  # 暂时都指向同一个文件
+    202: "male_pants.jpg",
     
-    # 女下装 (3XX)
-    301: "female_bottom_01.jpg",
-    302: "female_bottom_02.jpg",
+    # 女下装 (300-399)
+    300: "female_pants.jpg",
+    301: "female_pants.jpg",
+    302: "female_pants.jpg",
     
-    # 连衣裙 (4XX)
-    401: "dress_01.jpg",
-    402: "dress_02.jpg",
+    # 连衣裙 (400-499)
+    400: "dress.jpg",
+    401: "dress.jpg",
+    402: "dress.jpg",
 }
 
 
@@ -264,7 +269,7 @@ def load_clothes_image(sex: int, upper_style_id: int = None, lower_style_id: int
         if upper_style_id is None or lower_style_id is None:
             raise ValueError("男性必须同时选择上装和下装")
     elif sex == 1:  # 女性
-        gender_dir = clothes_dir / "male" / "female"
+        gender_dir = clothes_dir / "female"
         # 连衣裙和上下装二选一
         has_dress = dress_id is not None
         has_upper_lower = upper_style_id is not None or lower_style_id is not None

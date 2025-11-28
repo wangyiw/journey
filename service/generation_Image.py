@@ -12,6 +12,7 @@ from utils.image_utils import validate_image_format, validate_image_constraints,
 from utils.logger import logger
 import logging
 import json
+import traceback
     
 logger = logging.getLogger(__name__)
 
@@ -71,65 +72,65 @@ class DoubaoImages(LLMModel):
         
         return True
 
-    async def verify_input_data(self, requestDto: CreatePictureRequest):
+    async def verify_input_data(self, ImageStreamRequest: CreatePictureRequest):
         """
         校验输入参数
         添加更多入参校验逻辑
         """
-        if requestDto.city not in CityEnum:
+        if ImageStreamRequest.city not in CityEnum:
             raise CommonException(message="城市不存在")
-        if requestDto.mode not in ModeEnum:
+        if ImageStreamRequest.mode not in ModeEnum:
             raise CommonException(message="mode参数错误")
-        if requestDto.gender not in GenderEnum:
+        if ImageStreamRequest.gender not in GenderEnum:
             raise CommonException(message="gender参数错误")
-        if requestDto.mode == ModeEnum.Easy and requestDto.clothes is None:
+        if ImageStreamRequest.mode == ModeEnum.Easy and ImageStreamRequest.clothes is None:
             raise CommonException(message="轻松模式下必须提供服装参数")
-        if requestDto.mode == ModeEnum.Master and requestDto.master_mode_tags is None:
+        if ImageStreamRequest.mode == ModeEnum.Master and ImageStreamRequest.master_mode_tags is None:
             raise CommonException(message="大师模式下必须提供标签参数")
 
 
-    async def create_picture(self, requestDto: CreatePictureRequest)->CreatePictureResponse:
+    async def create_picture(self, ImageStreamRequest: CreatePictureRequest)->CreatePictureResponse:
         """
         图生图主逻辑
         """
-        await self.verify_input_data(requestDto)
+        await self.verify_input_data(ImageStreamRequest)
 
         # 2.验证输入图片格式
-        await self.verify_input_image(requestDto.originPicBase64)
+        await self.verify_input_image(ImageStreamRequest.originPicBase64)
         
         # 3.拼装提示词（使用策略模式）
-        createPicturePrompt = generate_prompt_by_request(requestDto)
+        createPicturePrompt = generate_prompt_by_request(ImageStreamRequest)
         logger.info(f"拼装提示词：{createPicturePrompt}")
         
         # 4.准备输入图片列表
         # 图片来源说明：
-        # - 人物原图：前端传入的 Base64（requestDto.originPicBase64）
+        # - 人物原图：前端传入的 Base64（ImageStreamRequest.originPicBase64）
         # - 服装图片：后端根据性别和样式ID从本地文件加载（使用 ClothesLoader）
         createPictureInputBase64List = []
         
         # 4.1 添加人物原图（前端传入）
-        createPictureInputBase64List.append(requestDto.originPicBase64)
+        createPictureInputBase64List.append(ImageStreamRequest.originPicBase64)
         logger.info(f"添加人物原图: 来源=前端上传")
         
         # 4.2 轻松模式：根据性别和样式ID自动加载服装图片（后端本地文件）
-        if requestDto.mode == ModeEnum.Easy and requestDto.clothes:
+        if ImageStreamRequest.mode == ModeEnum.Easy and ImageStreamRequest.clothes:
             try:
                 # 服装图片加载
                 clothes_images = load_clothes_image(
-                    sex=requestDto.gender.value,
-                    upper_style_id=requestDto.clothes.upperStyle,
-                    lower_style_id=requestDto.clothes.lowerStyle,
-                    dress_id=requestDto.clothes.dress
+                    sex=ImageStreamRequest.gender.value,
+                    upper_style_id=ImageStreamRequest.clothes.upperStyle,
+                    lower_style_id=ImageStreamRequest.clothes.lowerStyle,
+                    dress_id=ImageStreamRequest.clothes.dress
                 )
                 
                 # 添加服装图片到输入列表
                 createPictureInputBase64List.extend(clothes_images)
                 
                 # 日志记录
-                if requestDto.clothes.dress is not None:
-                    logger.info(f"添加连衣裙: 性别={requestDto.gender.name}, 样式ID={requestDto.clothes.dress}, 来源=本地文件")
+                if ImageStreamRequest.clothes.dress is not None:
+                    logger.info(f"添加连衣裙: 性别={ImageStreamRequest.gender.name}, 样式ID={ImageStreamRequest.clothes.dress}, 来源=本地文件")
                 else:
-                    logger.info(f"添加服装图片: 性别={requestDto.gender.name}, 上装ID={requestDto.clothes.upperStyle}, 下装ID={requestDto.clothes.lowerStyle}, 来源=本地文件")
+                    logger.info(f"添加服装图片: 性别={ImageStreamRequest.gender.name}, 上装ID={ImageStreamRequest.clothes.upperStyle}, 下装ID={ImageStreamRequest.clothes.lowerStyle}, 来源=本地文件")
                 
             except ValueError as e:
                 logger.error(f"加载服装图片失败: {e}")
@@ -164,33 +165,33 @@ class DoubaoImages(LLMModel):
         
         return CreatePictureResponse(images=images)
     
-    async def create_picture_stream(self, requestDto: CreatePictureRequest):
+    async def create_picture_stream(self, ImageStreamRequest: CreatePictureRequest):
         """
         流式图生图 - 生成器方法，用于 SSE 推送
         每生成一张图片就立即推送，最后发送完成或失败状态
         """
         try:
             # 参数校验
-            await self.verify_input_data(requestDto)
+            await self.verify_input_data(ImageStreamRequest)
 
             # 验证输入图片
-            await self.verify_input_image(requestDto.originPicBase64)
+            await self.verify_input_image(ImageStreamRequest.originPicBase64)
             
             # 生成提示词
-            createPicturePrompt = generate_prompt_by_request(requestDto)
+            createPicturePrompt = generate_prompt_by_request(ImageStreamRequest)
             logger.info(f"流式生成 - 提示词：{createPicturePrompt}")
             
             # 准备输入图片列表
-            createPictureInputBase64List = [requestDto.originPicBase64]
+            createPictureInputBase64List = [ImageStreamRequest.originPicBase64]
             
             # 轻松模式：加载服装图片
-            if requestDto.mode == ModeEnum.Easy and requestDto.clothes:
+            if ImageStreamRequest.mode == ModeEnum.Easy and ImageStreamRequest.clothes:
                 try:
                     clothes_images = load_clothes_image(
-                        sex=requestDto.gender.value,
-                        upper_style_id=requestDto.clothes.upperStyle,
-                        lower_style_id=requestDto.clothes.lowerStyle,
-                        dress_id=requestDto.clothes.dress
+                        sex=ImageStreamRequest.gender.value,
+                        upper_style_id=ImageStreamRequest.clothes.upperStyle,
+                        lower_style_id=ImageStreamRequest.clothes.lowerStyle,
+                        dress_id=ImageStreamRequest.clothes.dress
                     )
                     createPictureInputBase64List.extend(clothes_images)
                 except ValueError as e:
@@ -207,7 +208,7 @@ class DoubaoImages(LLMModel):
             async for base64_image in self.create_picture_by_seed_ream(createPictureInputBase64List, createPicturePrompt):
                 # 封装成功生成的消息
                 resp = ImageStreamEvent(
-                    status=StreamStatusEnum.GENERATING,
+                    status=StreamStatusEnum.Generating,
                     index=image_count,
                     base64=base64_image,
                     message="success"
@@ -219,7 +220,7 @@ class DoubaoImages(LLMModel):
             # 发送完成信号
             logger.info(f"流式生成完成，共生成 {image_count} 张图片")
             end_resp = ImageStreamEvent(
-                status=StreamStatusEnum.COMPLETED,
+                status=StreamStatusEnum.Completed,
                 message=f"生成流程结束，共生成 {image_count} 张图片"
             )
             yield end_resp.to_event_data()
@@ -227,9 +228,10 @@ class DoubaoImages(LLMModel):
         except Exception as e:
             # 发送错误信号
             logger.error(f"流式生成异常: {e}")
-            from model.createPictureResp import ImageStreamEvent, StreamStatusEnum
+            error_detail = traceback.format_exc()
+            logger.error(f"异常详情: {error_detail}")
             error_resp = ImageStreamEvent(
-                status=StreamStatusEnum.FAILED,
+                status=StreamStatusEnum.Failed,
                 message=str(e)
             )
             yield error_resp.to_event_data()

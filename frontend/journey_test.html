@@ -558,10 +558,11 @@
                 const decoder = new TextDecoder();
                 let buffer = '';
                 let imageCount = 0;
+                let hasHiddenLoading = false;
 
                 while (true) {
                     const { done, value } = await reader.read();
-                    
+
                     if (done) {
                         break;
                     }
@@ -576,9 +577,14 @@
                             try {
                                 const data = JSON.parse(jsonStr);
                                 console.log('收到 SSE 事件:', data);
-                                
+
                                 // 根据新的状态枚举处理
                                 if (data.status === 'generating') {
+                                    // 收到第一个生成消息时隐藏 loading
+                                    if (!hasHiddenLoading) {
+                                        setLoading(false);
+                                        hasHiddenLoading = true;
+                                    }
                                     // 正在生成中，渲染图片
                                     imageCount++;
                                     renderStreamImage(data.index, data.base64);
@@ -612,7 +618,7 @@
                 setLoading(false);
             }
         }
-        
+
         function renderStreamImage(index, base64) {
             const slot = document.getElementById(`image-slot-${index}`);
             if (slot) {

@@ -17,3 +17,5 @@ utils\pictures\output
 logs/
 *.log
 
+# env
+.env.dev

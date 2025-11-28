@@ -61,9 +61,9 @@ class CreatePictureResponse(BaseModel):
 
 class StreamStatusEnum(str, Enum):
     """流式推送状态枚举"""
-    GENERATING = "generating"  # 正在生成中（携带图片数据）
-    COMPLETED = "completed"    # 全部完成
-    FAILED = "failed"          # 发生错误
+    Generating = "generating"  # 正在生成中（携带图片数据）
+    Completed = "completed"    # 全部完成
+    Failed = "failed"          # 发生错误
 
 
 class ImageStreamEvent(BaseModel):

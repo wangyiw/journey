@@ -486,3 +486,27 @@ components.schemas.CreatePictureRespDto.Reference.$ref
 2025-11-28 11:00:22 [INFO    ] [llm.py:281] Final completed event
 2025-11-28 11:00:22 [INFO    ] [llm.py:283] recv.Usage: Usage(input_tokens=None, input_tokens_details=None, output_tokens=69360, total_tokens=69360, generated_images=4)
 2025-11-28 11:00:22 [INFO    ] [llm.py:293] 流式响应结束，共收到 5 个事件
+2025-11-28 11:08:28 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 11:08:28 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api.didainternal.com/v1
+2025-11-28 11:08:29 [INFO    ] [llm.py:209] 调用豆包生图接口（OpenAI SDK）
+2025-11-28 11:08:29 [INFO    ] [llm.py:210]   Base URL: http://dragon-open-api.didainternal.com/v1
+2025-11-28 11:08:29 [INFO    ] [llm.py:211]   API Key: 已配置 (长度: 51)
+2025-11-28 11:08:29 [INFO    ] [llm.py:212]   Model ID: 1d2e8f3c-9a7b-4e8c-bc3e-2e9f1d5a7c6f
+2025-11-28 11:08:29 [INFO    ] [llm.py:221]  OpenAI 客户端创建成功
+2025-11-28 11:08:29 [INFO    ] [_client.py:1025] HTTP Request: POST http://dragon-open-api.didainternal.com/v1/images/generations "HTTP/1.1 404 Not Found"
+2025-11-28 11:08:29 [ERROR   ] [llm.py:340] 调用豆包生图接口失败
+2025-11-28 11:08:29 [ERROR   ] [llm.py:341]   错误类型: NotFoundError
+2025-11-28 11:08:29 [ERROR   ] [llm.py:342]   错误信息: Error code: 404
+2025-11-28 11:08:29 [ERROR   ] [llm.py:364]   诊断: 模型不存在
+2025-11-28 11:31:38 [INFO    ] [setting.py:40] 当前环境ENV 变量->>>>>>>> dev <<<<<<
+2025-11-28 11:31:38 [INFO    ] [setting.py:42] LLM_URL: http://dragon-open-api.didainternal.com/api/v1
+2025-11-28 11:31:38 [INFO    ] [llm.py:209]   Base URL: http://dragon-open-api.didainternal.com/api/v1
+2025-11-28 11:31:38 [INFO    ] [llm.py:210]   API Key: 已配置
+2025-11-28 11:31:38 [INFO    ] [llm.py:211]   Model ID: 1d2e8f3c-9a7b-4e8c-bc3e-2e9f1d5a7c6f
+2025-11-28 11:31:38 [INFO    ] [llm.py:220]  OpenAI 客户端创建成功
+2025-11-28 11:31:39 [INFO    ] [_base_client.py:1071] Retrying request to /images/generations in 0.459276 seconds
+2025-11-28 11:31:40 [INFO    ] [_client.py:1025] HTTP Request: POST http://dragon-open-api.didainternal.com/api/v1/images/generations "HTTP/1.1 404 Not Found"
+2025-11-28 11:31:40 [ERROR   ] [llm.py:339] 调用豆包生图接口失败
+2025-11-28 11:31:40 [ERROR   ] [llm.py:340]   错误类型: NotFoundError
+2025-11-28 11:31:40 [ERROR   ] [llm.py:341]   错误信息: Error code: 404
+2025-11-28 11:31:40 [ERROR   ] [llm.py:363]   诊断: 模型不存在

@@ -194,53 +194,55 @@ def load_local_image_to_base64(file_path: Union[str, Path]) -> str:
 
 
 # 服装样式ID映射表
-# 样式ID编码规则：XYY
-# - X: 性别+类别（0=男上装, 1=女上装, 2=男下装, 3=女下装, 4=连衣裙）
-# - YY: 服装编号（01-99）
+# 样式ID编码规则：使用描述性字符串
+# - 格式: {gender}_{category}_{number}
+# - gender: male/female
+# - category: upper/lower/dress
+# - number: 01-99
 CLOTHES_STYLE_MAPPING = {
-    # 男上装 (0-99) - 对应 utils/pictures/clothes/male/ 下的文件
-    0: "male_clothes.jpg",
-    1: "male_clothes.jpg",  # 暂时都指向同一个文件
-    2: "male_clothes.jpg",
+    # 男上装 - 对应 utils/pictures/clothes/male/ 下的文件
+    "male_upper_01": "male_clothes.jpg",
+    "male_upper_02": "male_clothes.jpg",
+    "male_upper_03": "male_clothes.jpg",
     
-    # 女上装 (100-199) - 对应 utils/pictures/clothes/female/ 下的文件
-    100: "female_clothes.jpg",
-    101: "female_clothes.jpg",
-    102: "female_clothes.jpg",
+    # 女上装 - 对应 utils/pictures/clothes/female/ 下的文件
+    "female_upper_01": "female_clothes.jpg",
+    "female_upper_02": "female_clothes.jpg",
+    "female_upper_03": "female_clothes.jpg",
     
-    # 男下装 (200-299)
-    200: "male_pants.jpg",
-    201: "male_pants.jpg",  # 暂时都指向同一个文件
-    202: "male_pants.jpg",
+    # 男下装
+    "male_lower_01": "male_pants.jpg",
+    "male_lower_02": "male_pants.jpg",
+    "male_lower_03": "male_pants.jpg",
     
-    # 女下装 (300-399)
-    300: "female_pants.jpg",
-    301: "female_pants.jpg",
-    302: "female_pants.jpg",
+    # 女下装
+    "female_lower_01": "female_pants.jpg",
+    "female_lower_02": "female_pants.jpg",
+    "female_lower_03": "female_pants.jpg",
     
-    # 连衣裙 (400-499)
-    400: "dress.jpg",
-    401: "dress.jpg",
-    402: "dress.jpg",
+    # 连衣裙
+    "female_dress_01": "dress.jpg",
+    "female_dress_02": "dress.jpg",
+    "female_dress_03": "dress.jpg",
 }
 
 
-def load_clothes_image(sex: int, upper_style_id: int = None, lower_style_id: int = None, dress_id: int = None) -> List[str]:
+def load_clothes_image(sex: int, upper_style_id: str = None, lower_style_id: str = None, dress_id: str = None) -> List[str]:
     """
     根据性别和样式ID加载服装图片
     
     样式ID编码规则：
-    - 男上装: 001-099
-    - 女上装: 101-199
-    - 男下装: 201-299
-    - 女下装: 301-399
-    - 连衣裙: 401-499
+    - 男上装: male_upper_01, male_upper_02, ...
+    - 女上装: female_upper_01, female_upper_02, ...
+    - 男下装: male_lower_01, male_lower_02, ...
+    - 女下装: female_lower_01, female_lower_02, ...
+    - 连衣裙: female_dress_01, female_dress_02, ...
     
     Args:
         sex: 性别（0=男，1=女）
-        upper_style_id: 上装样式ID（可选）
-        lower_style_id: 下装样式ID（可选）
-        dress_id: 连衣裙样式ID（可选，仅女性）
+        upper_style_id: 上装样式ID字符串（可选）
+        lower_style_id: 下装样式ID字符串（可选）
+        dress_id: 连衣裙样式ID字符串（可选，仅女性）
         
     Returns:
         List[str]: 服装图片Base64列表
@@ -251,11 +253,11 @@ def load_clothes_image(sex: int, upper_style_id: int = None, lower_style_id: int
         
     Example:
         >>> # 男性上装+下装
-        >>> load_clothes_image(sex=0, upper_style_id=1, lower_style_id=201)
+        >>> load_clothes_image(sex=0, upper_style_id="male_upper_01", lower_style_id="male_lower_01")
         ['data:image/jpeg;base64,...', 'data:image/jpeg;base64,...']
         
         >>> # 女性连衣裙
-        >>> load_clothes_image(sex=1, dress_id=401)
+        >>> load_clothes_image(sex=1, dress_id="female_dress_01")
         ['data:image/jpeg;base64,...']
     """
     # 获取服装图片根目录

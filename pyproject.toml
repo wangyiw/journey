@@ -12,6 +12,7 @@ dependencies = [
     "uvicorn[standard]>=0.38.0",
     "volcengine-python-sdk[ark]>=4.0.35",
     "pillow>=10.0.0",
+    "python-multipart>=0.0.20",
 ]
 
 [[tool.uv.index]]

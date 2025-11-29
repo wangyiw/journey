@@ -284,11 +284,19 @@
                 <div id="splitSuitInputs" class="sub-panel">
                     <div class="form-group">
                         <label>上装样式 (upperStyle)</label>
-                        <input type="number" id="upperStyle" value="0" min="0" placeholder="输入上装样式ID">
+                        <select id="upperStyle">
+                            <option value="male_upper_01">男上装样式 01</option>
+                            <option value="male_upper_02">男上装样式 02</option>
+                            <option value="male_upper_03">男上装样式 03</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>下装样式 (lowerStyle)</label>
-                        <input type="number" id="lowerStyle" value="1" min="0" placeholder="输入下装样式ID">
+                        <select id="lowerStyle">
+                            <option value="male_lower_01">男下装样式 01</option>
+                            <option value="male_lower_02">男下装样式 02</option>
+                            <option value="male_lower_03">男下装样式 03</option>
+                        </select>
                     </div>
                 </div>
 
@@ -296,7 +304,11 @@
                 <div id="dressInputs" class="sub-panel hidden">
                     <div class="form-group">
                         <label>连衣裙样式 (dress)</label>
-                        <input type="number" id="dressStyle" value="4" min="0" placeholder="输入连衣裙样式ID">
+                        <select id="dressStyle">
+                            <option value="female_dress_01">连衣裙样式 01</option>
+                            <option value="female_dress_02">连衣裙样式 02</option>
+                            <option value="female_dress_03">连衣裙样式 03</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -440,46 +452,91 @@
             if (mode === "Easy") {
                 els.easyModePanel.classList.remove('hidden');
                 els.masterModePanel.classList.add('hidden');
-            } else {
-                els.easyModePanel.classList.add('hidden');
-                els.masterModePanel.classList.remove('hidden');
-                return;
-            }
 
-            // 服装逻辑
-            if (gender === "Male") {
-                // 男性
-                els.femaleTypeSelector.classList.add('hidden');
-                els.splitSuitInputs.classList.remove('hidden');
-                els.dressInputs.classList.add('hidden');
-            } else {
-                // 女性
-                els.femaleTypeSelector.classList.remove('hidden');
-                const clothType = els.femaleClothType.value;
-                if (clothType === 'suit') {
+                // 轻松模式下的服装逻辑
+                if (gender === "Male") {
+                    // 男性: 隐藏女性服装类型选择器,只显示上下装
+                    els.femaleTypeSelector.classList.add('hidden');
                     els.splitSuitInputs.classList.remove('hidden');
                     els.dressInputs.classList.add('hidden');
+
+                    // 更新上装下拉框选项为男性样式
+                    els.upperStyle.innerHTML = `
+                        <option value="male_upper_01">男上装样式 01</option>
+                        <option value="male_upper_02">男上装样式 02</option>
+                        <option value="male_upper_03">男上装样式 03</option>
+                    `;
+
+                    // 更新下装下拉框选项为男性样式
+                    els.lowerStyle.innerHTML = `
+                        <option value="male_lower_01">男下装样式 01</option>
+                        <option value="male_lower_02">男下装样式 02</option>
+                        <option value="male_lower_03">男下装样式 03</option>
+                    `;
                 } else {
-                    els.splitSuitInputs.classList.add('hidden');
-                    els.dressInputs.classList.remove('hidden');
+                    // 女性: 显示服装类型选择器
+                    els.femaleTypeSelector.classList.remove('hidden');
+                    const clothType = els.femaleClothType.value;
+                    if (clothType === 'suit') {
+                        els.splitSuitInputs.classList.remove('hidden');
+                        els.dressInputs.classList.add('hidden');
+
+                        // 更新上装下拉框选项为女性样式
+                        els.upperStyle.innerHTML = `
+                            <option value="female_upper_01">女上装样式 01</option>
+                            <option value="female_upper_02">女上装样式 02</option>
+                            <option value="female_upper_03">女上装样式 03</option>
+                        `;
+
+                        // 更新下装下拉框选项为女性样式
+                        els.lowerStyle.innerHTML = `
+                            <option value="female_lower_01">女下装样式 01</option>
+                            <option value="female_lower_02">女下装样式 02</option>
+                            <option value="female_lower_03">女下装样式 03</option>
+                        `;
+                    } else {
+                        els.splitSuitInputs.classList.add('hidden');
+                        els.dressInputs.classList.remove('hidden');
+                    }
+                }
+            } else {
+                // 大师模式
+                els.easyModePanel.classList.add('hidden');
+                els.masterModePanel.classList.remove('hidden');
+
+                // 大师模式下根据性别控制 Dress 选项
+                const masterTypeSelect = els.masterType;
+                const dressOption = masterTypeSelect.querySelector('option[value="Dress"]');
+
+                if (gender === "Male") {
+                    // 男性: 隐藏 Dress 选项
+                    dressOption.hidden = true;
+                    // 如果当前选中的是 Dress,自动切换到 Suit
+                    if (masterTypeSelect.value === "Dress") {
+                        masterTypeSelect.value = "Suit";
+                    }
+                } else {
+                    // 女性: 显示 Dress 选项
+                    dressOption.hidden = false;
                 }
             }
         }
 
         async function handleSubmit() {
-            if (!base64Image) {
+            const fileInput = els.fileInput;
+            if (!fileInput.files || fileInput.files.length === 0) {
                 alert("请先上传一张图片");
                 return;
             }
+            const file = fileInput.files[0];
 
             // 使用字符串枚举值
             const mode = document.querySelector('input[name="mode"]:checked').value;
             const gender = document.querySelector('input[name="gender"]:checked').value;
             const city = els.city.value;
 
-            // 基础 Payload
-            const payload = {
-                originPicBase64: base64Image,
+            // 1. 构建 JSON 参数对象
+            const params = {
                 city: city,
                 gender: gender,
                 mode: mode
@@ -487,34 +544,34 @@
 
             // 根据模式填充字段
             if (mode === "Easy") {
-                // 轻松模式 -> 构建 clothes
+                // 轻松模式 -> 构建 clothes (使用字符串样式ID)
                 if (gender === "Male") {
                     // 男性:必须传上下装
-                    payload.clothes = {
-                        upperStyle: parseInt(els.upperStyle.value),
-                        lowerStyle: parseInt(els.lowerStyle.value),
+                    params.clothes = {
+                        upperStyle: els.upperStyle.value,
+                        lowerStyle: els.lowerStyle.value,
                         dress: null
                     };
                 } else {
                     // 女性
                     const clothType = els.femaleClothType.value;
                     if (clothType === 'suit') {
-                        payload.clothes = {
-                            upperStyle: parseInt(els.upperStyle.value),
-                            lowerStyle: parseInt(els.lowerStyle.value),
+                        params.clothes = {
+                            upperStyle: els.upperStyle.value,
+                            lowerStyle: els.lowerStyle.value,
                             dress: null
                         };
                     } else {
-                        payload.clothes = {
+                        params.clothes = {
                             upperStyle: null,
                             lowerStyle: null,
-                            dress: parseInt(els.dressStyle.value)
+                            dress: els.dressStyle.value
                         };
                     }
                 }
             } else {
                 // 大师模式 -> 构建 master_mode_tags（使用字符串枚举值）
-                payload.master_mode_tags = {
+                params.master_mode_tags = {
                     style: els.masterStyle.value,
                     material: els.masterMaterial.value,
                     color: els.masterColor.value,
@@ -522,8 +579,15 @@
                 };
             }
 
+            // 2. 构建 FormData
+            const formData = new FormData();
+            formData.append('file', file); // 图片文件
+            formData.append('data', JSON.stringify(params)); // JSON 参数字符串
+
             // 显示调试信息
-            els.debugInfo.innerText = "请求参数:\n" + JSON.stringify(payload, null, 2);
+            els.debugInfo.innerText = "请求参数 (FormData):\n" +
+                "file: [Binary File]\n" +
+                "data: " + JSON.stringify(params, null, 2);
             els.debugInfo.style.display = 'block';
 
             // 使用流式接口
@@ -544,10 +608,7 @@
 
                 const response = await fetch(API_STREAM_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
+                    body: formData
                 });
 
                 if (!response.ok) {
@@ -578,23 +639,18 @@
                                 const data = JSON.parse(jsonStr);
                                 console.log('收到 SSE 事件:', data);
 
-                                // 根据新的状态枚举处理
                                 if (data.status === 'generating') {
-                                    // 收到第一个生成消息时隐藏 loading
                                     if (!hasHiddenLoading) {
                                         setLoading(false);
                                         hasHiddenLoading = true;
                                     }
-                                    // 正在生成中，渲染图片
                                     imageCount++;
                                     renderStreamImage(data.index, data.base64);
                                     els.statusText.innerText = `生成中... (${imageCount}/4)`;
                                 } else if (data.status === 'completed') {
-                                    // 生成完成
                                     els.statusText.innerText = `生成成功! ${data.message || ''}`;
                                     console.log('生成完成:', data);
                                 } else if (data.status === 'failed') {
-                                    // 生成失败
                                     throw new Error(data.message || '生成失败');
                                 }
                             } catch (e) {
@@ -606,8 +662,7 @@
                     }
                 }
 
-                els.debugInfo.innerText = "请求参数:\n" + JSON.stringify(payload, null, 2) +
-                    "\n\n流式接收完成";
+                els.debugInfo.innerText += "\n\n流式接收完成";
 
             } catch (error) {
                 console.error(error);
@@ -630,28 +685,6 @@
                 slot.style.cssText = '';
                 console.log(`渲染图片 ${index + 1}`);
             }
-        }
-
-        function renderImages(base64List) {
-            els.imageGrid.innerHTML = '';
-
-            if (!base64List || base64List.length === 0) {
-                els.imageGrid.innerHTML = '<div style="grid-column: span 2; text-align:center;">没有返回图片</div>';
-                return;
-            }
-
-            base64List.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'result-item';
-
-                let src = typeof item === 'string' ? item : item.base64;
-                if (!src.startsWith('data:image')) {
-                    src = 'data:image/png;base64,' + src;
-                }
-
-                div.innerHTML = `<img src="${src}" onclick="window.open(this.src)" title="点击查看大图">`;
-                els.imageGrid.appendChild(div);
-            });
         }
 
         function setLoading(isLoading) {

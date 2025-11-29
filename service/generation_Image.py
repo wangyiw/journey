@@ -1,5 +1,7 @@
 
 from typing import List
+import base64
+from fastapi import UploadFile
 from core.llm import LLMModel
 from model.createPictureReq import CreatePictureRequest
 from model.createPictureResp import CreatePictureResponse
@@ -21,7 +23,52 @@ class DoubaoImages(LLMModel):
     """
     生图相关方法
     """
-    async def verify_input_image(self, inputImageBase64: str):
+    @staticmethod
+    async def verify_input_data(file: UploadFile, data: str) -> CreatePictureRequest:
+        """
+        校验前端传的json和图片，并返回 CreatePictureRequest 对象
+        """
+        # 1. 解析参数和处理图片
+        try:
+            # 解析 JSON
+            req_dict = json.loads(data)
+            request_model = CreatePictureRequest(**req_dict)
+            
+            # 处理图片
+            image_bytes = await file.read()
+            base64_str = base64.b64encode(image_bytes).decode('utf-8')
+            content_type = file.content_type or "image/jpeg"
+            image_format = "png" if "png" in content_type.lower() else "jpeg"
+            request_model.originPicBase64 = f"data:image/{image_format};base64,{base64_str}"
+            
+            # 业务规则校验: 男性不能选择连衣裙
+            if request_model.gender == GenderEnum.Male:
+                # 轻松模式: 检查 dress 字段
+                if request_model.mode == ModeEnum.Easy and request_model.clothes and request_model.clothes.dress is not None:
+                    raise CommonException(message="男性用户不能选择连衣裙类型")
+                # 大师模式: 检查 type 标签
+                if request_model.mode == ModeEnum.Master and request_model.master_mode_tags and request_model.master_mode_tags.type == "Dress":
+                    raise CommonException(message="男性用户不能选择 Dress 类型")
+            
+            logger.info(f"流式接口接收请求: city={request_model.city}, mode={request_model.mode}")
+            return request_model
+            
+        except Exception as e:
+            logger.error(f"参数解析失败: {e}")
+            # 对于流式接口前的参数错误，直接返回错误响应可能更好，但为了保持 SSE 格式，也可以在流中返回错误
+            # 这里选择直接抛出 HTTP 异常，由中间件处理
+            raise CommonException(message=f"参数解析失败: {str(e)}")
+    
+    async def translate_image_type(self,image:File):
+        """
+        TODO 转换前端输入的图片类型，暂不实现---后端处理前端传入的图片，转成 JPEG 并压缩
+        create_picture_stream 接口一开始，收到 file 后，不要直接 read 后就转 Base64，而是先用 PIL 压缩一下
+
+        """
+
+
+
+    def verify_input_image(self, inputImageBase64: str):
         """
         校验输入图片格式和约束条件
         
@@ -52,7 +99,7 @@ class DoubaoImages(LLMModel):
         
         return True
     
-    async def verify_image_quality(self, outputImageBase64List: List[str]):
+    def verify_image_quality(self, outputImageBase64List: List[str]):
         """
         校验生成图片质量
         
@@ -72,7 +119,7 @@ class DoubaoImages(LLMModel):
         
         return True
 
-    async def verify_input_data(self, ImageStreamRequest: CreatePictureRequest):
+    def verify_input_data(self, ImageStreamRequest: CreatePictureRequest):
         """
         校验输入参数
         添加更多入参校验逻辑
@@ -93,10 +140,10 @@ class DoubaoImages(LLMModel):
         """
         图生图主逻辑
         """
-        await self.verify_input_data(ImageStreamRequest)
+        self.verify_input_data(ImageStreamRequest)
 
         # 2.验证输入图片格式
-        await self.verify_input_image(ImageStreamRequest.originPicBase64)
+        self.verify_input_image(ImageStreamRequest.originPicBase64)
         
         # 3.拼装提示词（使用策略模式）
         createPicturePrompt = generate_prompt_by_request(ImageStreamRequest)
@@ -155,7 +202,7 @@ class DoubaoImages(LLMModel):
             outputImageBase64List.append(base64_image)
         
         # 5.校验生成图片质量（批量校验）
-        await self.verify_image_quality(outputImageBase64List)
+        self.verify_image_quality(outputImageBase64List)
 
         # 6.封装dto响应体返回
         images = [
@@ -172,10 +219,10 @@ class DoubaoImages(LLMModel):
         """
         try:
             # 参数校验
-            await self.verify_input_data(ImageStreamRequest)
+            self.verify_input_data(ImageStreamRequest)
 
             # 验证输入图片
-            await self.verify_input_image(ImageStreamRequest.originPicBase64)
+            self.verify_input_image(ImageStreamRequest.originPicBase64)
             
             # 生成提示词
             createPicturePrompt = generate_prompt_by_request(ImageStreamRequest)

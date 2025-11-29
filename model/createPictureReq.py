@@ -14,32 +14,32 @@ from core.enum import (
 
 class Clothes(BaseModel):
     """
-    服装参数配置（轻松模式下必传，大师模式下忽略）
+    服装参数配置（轻松模式下必传,大师模式下忽略）
     参数说明：
-    - upperStyle: 上装样式枚举值（0, 1, 2...），前端显示为【男上装】或【女上装】标签
-    - lowerStyle: 下装样式枚举值（0, 1, 2...），前端显示为【男下装】或【女下装】标签
-    - dress: 连衣裙样式枚举值（0, 1, 2...），前端显示为【连衣裙】标签（仅女性）
+    - upperStyle: 上装样式字符串标识（如 male_upper_01, female_upper_01），前端显示为【男上装】或【女上装】标签
+    - lowerStyle: 下装样式字符串标识（如 male_lower_01, female_lower_01），前端显示为【男下装】或【女下装】标签
+    - dress: 连衣裙样式字符串标识（如 female_dress_01），前端显示为【连衣裙】标签（仅女性）
     
     使用规则：
     - 男性：必须同时传 upperStyle 和 lowerStyle，不能传 dress
     - 女性：可以传 upperStyle + lowerStyle，或只传 dress（二选一）
     
     示例：
-    - 男性选择【男上装】样式1 + 【男下装】样式1：{"upperStyle": 0, "lowerStyle": 0, "dress": null}
-    - 女性选择【女上装】样式2 + 【女下装】样式2：{"upperStyle": 1, "lowerStyle": 1, "dress": null}
-    - 女性选择【连衣裙】样式1：{"upperStyle": null, "lowerStyle": null, "dress": 0}
+    - 男性选择【男上装】样式1 + 【男下装】样式1：{"upperStyle": "male_upper_01", "lowerStyle": "male_lower_01", "dress": null}
+    - 女性选择【女上装】样式2 + 【女下装】样式2：{"upperStyle": "female_upper_01", "lowerStyle": "female_lower_01", "dress": null}
+    - 女性选择【连衣裙】样式1：{"upperStyle": null, "lowerStyle": null, "dress": "female_dress_01"}
     """
-    upperStyle: Optional[int] = Field(
+    upperStyle: Optional[str] = Field(
         None,
-        description="上装样式枚举值（0, 1, 2...），对应后端 male_clothes.jpg 或 female_clothes.jpg"
+        description="上装样式字符串标识（如 male_upper_01, female_upper_01），对应后端服装图片"
     )
-    lowerStyle: Optional[int] = Field(
+    lowerStyle: Optional[str] = Field(
         None,
-        description="下装样式ID（如 201, 202...），男性和女性通用"
+        description="下装样式字符串标识（如 male_lower_01, female_lower_01），对应后端服装图片"
     )
-    dress: Optional[int] = Field(
+    dress: Optional[str] = Field(
         None,
-        description="连衣裙样式枚举值（0, 1, 2...），对应后端 female_dress.jpg，仅女性可用"
+        description="连衣裙样式字符串标识（如 female_dress_01），对应后端服装图片，仅女性可用"
     )
     
     @model_validator(mode='after')
@@ -70,35 +70,36 @@ class Clothes(BaseModel):
         json_schema_extra = {
             "examples": [
                 {
-                    "upperStyle": 101,
-                    "lowerStyle": 201,
+                    "upperStyle": "male_upper_01",
+                    "lowerStyle": "male_lower_01",
                     "dress": None
                 },
                 {
                     "upperStyle": None,
                     "lowerStyle": None,
-                    "dress": 301
+                    "dress": "female_dress_01"
                 }
             ]
         }
 
 
 class MasterModeTags(BaseModel):
-    """大师模式标签配置"""
-    style: Optional[StyleEnum] = Field(None, description="风格：0-法式优雅、1-日系简约、2-未来科技、3-AI随机匹配")
-    material: Optional[MaterialEnum] = Field(None, description="材质：0-牛仔、1-丝绸、2-棉料、3-金属、4-AI随机匹配")
-    color: Optional[ColorEnum] = Field(None, description="色调：0-暖色调、1-冷色调、2-中性色调、3-AI随机匹配")
-    type: Optional[TypeEnum] = Field(None, description="类型：0-套装、1-连衣裙、2-外套、3-当地特色服饰、4-AI随机匹配")
+    """大师模式标签配置"""  
+    style: Optional[StyleEnum] = Field(None, description="风格：FrenchElegant-法式优雅、JapaneseSimple-日系简约、FutureTech-未来科技、AIRandom-AI随机匹配")
+    material: Optional[MaterialEnum] = Field(None, description="材质：Cotton-牛仔、Silk-丝绸、Cotton-棉料、Metal-金属、AIRandom-AI随机匹配")
+    color: Optional[ColorEnum] = Field(None, description="色调：WarmTone-暖色调、ColdTone-冷色调、NeutralTone-中性色调、AIRandom-AI随机匹配")
+    type: Optional[TypeEnum] = Field(None, description="类型：Set-套装、Dress-连衣裙、Coat-外套、Local-当地特色服饰、AIRandom-AI随机匹配")
 
 
 class CreatePictureRequest(BaseModel):
     """
-    图片生图前端传的入参
+    图片生图前端传的模式标签入参
     """
     
-    originPicBase64: str = Field(
-        ..., 
-        description="用户输入的原图Base64编码。格式：data:image/<format>;base64,<base64_data>，仅支持 jpeg、png 格式"
+    # 设置为可选，后端 Controller 接到 File 手动注入进去。
+    originPicBase64: Optional[str] = Field(
+        None,
+        description="后端内部使用：从上传文件转换来的Base64，前端无需传递"
     )
     
     city: CityEnum = Field(
@@ -152,6 +153,9 @@ class CreatePictureRequest(BaseModel):
                     raise ValueError("男性不能选择连衣裙")
                 if self.clothes.upperStyle is None or self.clothes.lowerStyle is None:
                     raise ValueError("男性必须同时选择上装和下装")
+                # 男性不能选择连衣裙类型
+                if self.master_mode_tags.type == TypeEnum.Dress:
+                    raise ValueError("男性不能选择连衣裙类型")
             
             # 女性：可以选择上装+下装 或 连衣裙（二选一）
             if self.gender == GenderEnum.Female:
@@ -174,29 +178,26 @@ class CreatePictureRequest(BaseModel):
         json_schema_extra = {
             "examples": [
                 {
-                    "originPicBase64": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAA...",
                     "city": "Tokyo",
                     "gender": "Male",
                     "mode": "Easy",
                     "clothes": {
-                        "upperStyle": 0,
-                        "lowerStyle": 1,
+                        "upperStyle": "male_upper_01",
+                        "lowerStyle": "male_lower_01",
                         "dress": None
                     }
                 },
                 {
-                    "originPicBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
                     "city": "Paris",
                     "gender": "Female",
                     "mode": "Easy",
                     "clothes": {
-                        "upperStyle": 0,
-                        "lowerStyle": 1,
+                        "upperStyle": "female_upper_01",
+                        "lowerStyle": "female_lower_01",
                         "dress": None
                     }
                 },
                 {
-                    "originPicBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
                     "city": "Paris",
                     "gender": "Female",
                     "mode": "Master",

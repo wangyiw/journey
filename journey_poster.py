@@ -1,5 +1,5 @@
 # 提供 fastapi接口
-from fastapi import FastAPI, HTTPException, Request, status as http_status
+from fastapi import FastAPI, HTTPException, Request, status as http_status, UploadFile, Form, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.exceptions import RequestValidationError
@@ -11,6 +11,7 @@ from datetime import datetime
 import uvicorn
 import asyncio
 import json
+import base64
 from setting import settings, ENV
 from core.llm import LLMModel
 from core.llm import LLMConf
@@ -176,19 +177,23 @@ async def health_check():
     return await process_response(data, message="healthy")
 
 @app.post("/createPicture", tags=["图生图接口"])
-async def create_picture(CreatePictureRequest: CreatePictureRequest) -> CreatePictureResponse:
+async def create_picture(
+    file: UploadFile = File(..., alias="file", description="用户上传的原图文件"),
+    data: str = Form(..., alias="data", description="JSON 字符串格式的请求参数")
+) -> CreatePictureResponse:
     """
     图片生图接口
     
     基于用户上传的原图和选择的参数，生成4张不同场景的图片。
     
     **参数说明：**
-    - `originPicBase64`: 用户上传的原图，Base64编码格式（data:image/jpeg;base64,... 或 data:image/png;base64,...）
-    - `city`: 城市枚举值（0-19，如0=东京、1=巴黎等）
-    - `gender`: 性别（0=男、1=女）
-    - `mode`: 模式（0=轻松模式、1=大师模式）
-    - `clothes`: 轻松模式下必填，包含服装配置
-    - `master_mode_tags`: 大师模式下必填，包含风格、材质、色调等标签
+    - `file`: 用户上传的原图文件（multipart/form-data）
+    - `data`: JSON 字符串格式的请求参数，包含：
+        - `city`: 城市枚举值（0-19，如0=东京、1=巴黎等）
+        - `gender`: 性别（0=男、1=女）
+        - `mode`: 模式（0=轻松模式、1=大师模式）
+        - `clothes`: 轻松模式下必填，包含服装配置
+        - `master_mode_tags`: 大师模式下必填，包含风格、材质、色调等标签
     
     **返回：**
     - 成功时返回4张生成的图片（Base64编码列表）
@@ -197,10 +202,17 @@ async def create_picture(CreatePictureRequest: CreatePictureRequest) -> CreatePi
     max_retries = 2
     for attempt in range(max_retries):
         try:
-            # 1. 创建 LLM 配置并实例化
-            llm_conf = LLMConf()
-            return await DoubaoImages(llm_conf).create_picture(CreatePictureRequest)
+            # 1. 解析前端传来的 JSON
+            request_model = DoubaoImages.verify_input_data(file, data)
             
+            logger.info(f"接收图片成功: format={image_format}, size={len(image_bytes)} bytes")
+
+            # 4. 创建 LLM 配置并实例化
+            llm_conf = LLMConf()
+            return await DoubaoImages(llm_conf).create_picture(request_model)
+            
+        except CommonException as e:
+            raise e
         except Exception as e:
             logger.error(f"图生图接口异常, 第 {attempt + 1} 次尝试失败: {e}")
             if attempt == max_retries - 1:
@@ -211,7 +223,10 @@ async def create_picture(CreatePictureRequest: CreatePictureRequest) -> CreatePi
             await asyncio.sleep(1)
         
 @app.post("/createPictureStream", tags=["图生图接口"])
-async def create_picture_stream(CreatePictureRequest: CreatePictureRequest):
+async def create_picture_stream(
+    file: UploadFile = File(..., alias="file", description="用户上传的原图文件"),
+    data: str = Form(..., alias="data", description="JSON 字符串格式的请求参数")
+):
     """
     流式图片生成接口
     
@@ -219,7 +234,8 @@ async def create_picture_stream(CreatePictureRequest: CreatePictureRequest):
     使用 Server-Sent Events (SSE) 格式返回。
     
     **入参：**
-    - 与 /createPicture 接口相同
+    - `file`: 用户上传的原图文件（multipart/form-data）
+    - `data`: JSON 字符串格式的请求参数（同 createPicture 接口）
     
     **返回格式：**
     - Content-Type: text/event-stream
@@ -234,13 +250,20 @@ async def create_picture_stream(CreatePictureRequest: CreatePictureRequest):
       {"status": "failed", "message": "错误信息"}
       ```
     """
+    # 1. 解析参数和处理图片
+    try:
+        request_model = DoubaoImages.verify_input_data(file, data)
+    except Exception as e:
+        logger.error(f"图生图SSE接口异常: {e}")
+        raise CommonException(message="图生图SSE接口异常: " + str(e))
+        
     async def generateImageStream():
         max_retries = 2
         for attempt in range(max_retries):
             try:
                 llm_conf = LLMConf()
                 # service 层已经封装了完整的状态推送（generating/completed/failed）
-                async for chunk in DoubaoImages(llm_conf).create_picture_stream(CreatePictureRequest):
+                async for chunk in DoubaoImages(llm_conf).create_picture_stream(request_model):
                     yield chunk
                 return
             except Exception as e:

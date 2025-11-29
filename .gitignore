@@ -19,3 +19,4 @@ logs/
 *.log
 # env
 .env.dev
+.env.dev"env.dev" 

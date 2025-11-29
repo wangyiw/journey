@@ -5,6 +5,7 @@ from io import BytesIO
 from pathlib import Path
 from PIL import Image
 
+# 本地服装素材图片对应和处理图片的工具函数
 
 def is_valid_base64_image(data: str) -> bool:
     """

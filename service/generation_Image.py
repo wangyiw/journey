@@ -10,7 +10,7 @@ from core.exceptions import CommonException, ParamException, ErrorCode
 from core.prompt_strategy import generate_prompt_by_request
 from model.createPictureResp import ImageItem
 from model.createPictureResp import ImageStreamEvent, StreamStatusEnum
-from utils.image_utils import validate_image_format, validate_image_constraints, load_clothes_image
+from core.image_utils import validate_image_format, validate_image_constraints, load_clothes_image
 from utils.logger import logger
 import logging
 import json

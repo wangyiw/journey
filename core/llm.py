@@ -7,7 +7,7 @@ import os
 from typing import Optional, List
 from openai import OpenAI, AsyncOpenAI
 from pydantic import BaseModel
-from utils.image_utils import prepare_image_list_for_api
+from core.image_utils import prepare_image_list_for_api
 from setting import settings
 from core.exceptions import (
     ErrorCode, 

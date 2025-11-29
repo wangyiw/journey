@@ -146,6 +146,8 @@ class CreatePictureRequest(BaseModel):
     @model_validator(mode='after')
     def validate_gender_and_clothes(self):
         """验证性别和服装类别的匹配"""
+        
+        # 1. 轻松模式校验
         if self.mode == ModeEnum.Easy and self.clothes:
             # 男性：只能选择上装+下装
             if self.gender == GenderEnum.Male:
@@ -153,9 +155,6 @@ class CreatePictureRequest(BaseModel):
                     raise ValueError("男性不能选择连衣裙")
                 if self.clothes.upperStyle is None or self.clothes.lowerStyle is None:
                     raise ValueError("男性必须同时选择上装和下装")
-                # 男性不能选择连衣裙类型
-                if self.master_mode_tags.type == TypeEnum.Dress:
-                    raise ValueError("男性不能选择连衣裙类型")
             
             # 女性：可以选择上装+下装 或 连衣裙（二选一）
             if self.gender == GenderEnum.Female:
@@ -170,6 +169,12 @@ class CreatePictureRequest(BaseModel):
                 if has_upper_lower and not has_dress:
                     if self.clothes.upperStyle is None or self.clothes.lowerStyle is None:
                         raise ValueError("女性选择上装下装时，必须同时选择上装和下装")
+
+        # 2. 大师模式校验
+        if self.mode == ModeEnum.Master and self.master_mode_tags:
+            if self.gender == GenderEnum.Male:
+                if self.master_mode_tags.type == TypeEnum.Dress:
+                    raise ValueError("男性不能选择连衣裙类型")
         
         return self
         

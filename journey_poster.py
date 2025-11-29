@@ -203,9 +203,9 @@ async def create_picture(
     for attempt in range(max_retries):
         try:
             # 1. 解析前端传来的 JSON
-            request_model = DoubaoImages.verify_input_data(file, data)
+            request_model = await DoubaoImages.verify_input_data(file, data)
             
-            logger.info(f"接收图片成功: format={image_format}, size={len(image_bytes)} bytes")
+            logger.info(f"request_model 类型: {type(request_model)}, 值: {request_model}")
 
             # 4. 创建 LLM 配置并实例化
             llm_conf = LLMConf()
@@ -222,7 +222,7 @@ async def create_picture(
             # 等待一秒后重试
             await asyncio.sleep(1)
         
-@app.post("/createPictureStream", tags=["图生图接口"])
+@app.post("/createPictureStream", tags=["图生图流式接口"])
 async def create_picture_stream(
     file: UploadFile = File(..., alias="file", description="用户上传的原图文件"),
     data: str = Form(..., alias="data", description="JSON 字符串格式的请求参数")
@@ -252,11 +252,11 @@ async def create_picture_stream(
     """
     # 1. 解析参数和处理图片
     try:
-        request_model = DoubaoImages.verify_input_data(file, data)
+        request_model = await DoubaoImages.verify_input_data(file, data)
     except Exception as e:
         logger.error(f"图生图SSE接口异常: {e}")
         raise CommonException(message="图生图SSE接口异常: " + str(e))
-        
+    
     async def generateImageStream():
         max_retries = 2
         for attempt in range(max_retries):

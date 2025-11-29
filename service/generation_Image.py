@@ -41,14 +41,7 @@ class DoubaoImages(LLMModel):
             image_format = "png" if "png" in content_type.lower() else "jpeg"
             request_model.originPicBase64 = f"data:image/{image_format};base64,{base64_str}"
             
-            # 业务规则校验: 男性不能选择连衣裙
-            if request_model.gender == GenderEnum.Male:
-                # 轻松模式: 检查 dress 字段
-                if request_model.mode == ModeEnum.Easy and request_model.clothes and request_model.clothes.dress is not None:
-                    raise CommonException(message="男性用户不能选择连衣裙类型")
-                # 大师模式: 检查 type 标签
-                if request_model.mode == ModeEnum.Master and request_model.master_mode_tags and request_model.master_mode_tags.type == "Dress":
-                    raise CommonException(message="男性用户不能选择 Dress 类型")
+
             
             logger.info(f"流式接口接收请求: city={request_model.city}, mode={request_model.mode}")
             return request_model
@@ -59,14 +52,43 @@ class DoubaoImages(LLMModel):
             # 这里选择直接抛出 HTTP 异常，由中间件处理
             raise CommonException(message=f"参数解析失败: {str(e)}")
     
-    async def translate_image_type(self,image:File):
+    async def translate_image_type(self,inputImage:bytes)->str:
         """
         TODO 转换前端输入的图片类型，暂不实现---后端处理前端传入的图片，转成 JPEG 并压缩
         create_picture_stream 接口一开始，收到 file 后，不要直接 read 后就转 Base64，而是先用 PIL 压缩一下
-
+        不一定用：但是要有这个方法备用
+        输入：图片二进制 bytes
+        输出：Base64编码的图片 str
         """
-
-
+        try:
+            # 1. 打开图片
+            img = Image.open(io.BytesIO(inputImage))
+            
+            # 2. 兼容性处理：如果是 RGBA (PNG透明底)，转为 RGB
+            if img.mode in ('RGBA', 'P'):
+                img = img.convert('RGB')
+                
+            # 3. 压缩保存到内存中
+            output_buffer = io.BytesIO()
+            img.save(output_buffer, format='JPEG', quality=85)
+            
+            # 4. 转 Base64
+            compressed_bytes = output_buffer.getvalue()
+            base64_str = base64.b64encode(compressed_bytes).decode('utf-8')
+            
+            # 日志记录压缩效果
+            original_mb = len(image_bytes) / 1024 / 1024
+            new_mb = len(compressed_bytes) / 1024 / 1024
+            logger.info(f"图片处理: {original_mb:.2f}MB -> {new_mb:.2f}MB (JPEG)")
+            
+            return f"data:image/jpeg;base64,{base64_str}"
+            
+        except Exception as e:
+            logger.warning(f"图片压缩失败，降级使用原始数据: {e}")
+            # 兜底：直接转 Base64
+            base64_str = base64.b64encode(inputImage).decode('utf-8')
+            return f"data:image/jpeg;base64,{base64_str}"
+    
 
     def verify_input_image(self, inputImageBase64: str):
         """
@@ -119,29 +141,13 @@ class DoubaoImages(LLMModel):
         
         return True
 
-    def verify_input_data(self, ImageStreamRequest: CreatePictureRequest):
-        """
-        校验输入参数
-        添加更多入参校验逻辑
-        """
-        if ImageStreamRequest.city not in CityEnum:
-            raise CommonException(message="城市不存在")
-        if ImageStreamRequest.mode not in ModeEnum:
-            raise CommonException(message="mode参数错误")
-        if ImageStreamRequest.gender not in GenderEnum:
-            raise CommonException(message="gender参数错误")
-        if ImageStreamRequest.mode == ModeEnum.Easy and ImageStreamRequest.clothes is None:
-            raise CommonException(message="轻松模式下必须提供服装参数")
-        if ImageStreamRequest.mode == ModeEnum.Master and ImageStreamRequest.master_mode_tags is None:
-            raise CommonException(message="大师模式下必须提供标签参数")
 
 
     async def create_picture(self, ImageStreamRequest: CreatePictureRequest)->CreatePictureResponse:
         """
         图生图主逻辑
         """
-        self.verify_input_data(ImageStreamRequest)
-
+        # 1.请求参数校验已经在pytanic中实现了，这里不需要重复校验
         # 2.验证输入图片格式
         self.verify_input_image(ImageStreamRequest.originPicBase64)
         
@@ -218,8 +224,7 @@ class DoubaoImages(LLMModel):
         每生成一张图片就立即推送，最后发送完成或失败状态
         """
         try:
-            # 参数校验
-            self.verify_input_data(ImageStreamRequest)
+
 
             # 验证输入图片
             self.verify_input_image(ImageStreamRequest.originPicBase64)

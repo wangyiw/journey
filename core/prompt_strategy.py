@@ -18,7 +18,7 @@ class PromptStrategy(ABC):
         city_name = city.name
         if city_name in CITY_SCENES:
             return CITY_SCENES[city_name]["scene_description"]
-        return f"背景场景：{city_name}的标志性景点（随机生成四种不同场景）。"
+        return f"背景场景：{city_name}的标志性景点"
 
 
 class EasyModePromptStrategy(PromptStrategy):

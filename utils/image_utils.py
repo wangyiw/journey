@@ -197,23 +197,23 @@ def load_local_image_to_base64(file_path: Union[str, Path]) -> str:
 # 样式ID编码规则：使用描述性字符串
 # - 格式: {gender}_{category}_{number}
 # - gender: male/female
-# - category: upper/lower/dress
-# - number: 01-99
+# - category: upper/lower/dress 目前都是一样的文件，后面可以替换dict的value
+
 CLOTHES_STYLE_MAPPING = {
-    # 男上装 - 对应 utils/pictures/clothes/male/ 下的文件
+    # 男上装 - 对应 utils/pictures/clothes/male/ 下的文件 
     "male_upper_01": "male_clothes.jpg",
     "male_upper_02": "male_clothes.jpg",
     "male_upper_03": "male_clothes.jpg",
+        
+    # 男下装
+    "male_lower_01": "male_pants.jpg",
+    "male_lower_02": "male_pants.jpg",
+    "male_lower_03": "male_pants.jpg",
     
     # 女上装 - 对应 utils/pictures/clothes/female/ 下的文件
     "female_upper_01": "female_clothes.jpg",
     "female_upper_02": "female_clothes.jpg",
     "female_upper_03": "female_clothes.jpg",
-    
-    # 男下装
-    "male_lower_01": "male_pants.jpg",
-    "male_lower_02": "male_pants.jpg",
-    "male_lower_03": "male_pants.jpg",
     
     # 女下装
     "female_lower_01": "female_pants.jpg",
@@ -221,9 +221,9 @@ CLOTHES_STYLE_MAPPING = {
     "female_lower_03": "female_pants.jpg",
     
     # 连衣裙
-    "female_dress_01": "dress.jpg",
-    "female_dress_02": "dress.jpg",
-    "female_dress_03": "dress.jpg",
+    "female_dress_01": "female_dress.jpg",
+    "female_dress_02": "female_dress.jpg",
+    "female_dress_03": "female_dress.jpg",
 }
 
 

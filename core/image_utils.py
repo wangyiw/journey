@@ -1,4 +1,6 @@
 import re
+import os
+from setting import settings
 import base64
 from typing import Union, List, Tuple
 from io import BytesIO
@@ -248,10 +250,6 @@ def load_clothes_image(sex: int, upper_style_id: str = None, lower_style_id: str
     Returns:
         List[str]: 服装图片Base64列表
         
-    Raises:
-        FileNotFoundError: 图片文件不存在
-        ValueError: 参数错误或样式ID不存在
-        
     Example:
         >>> # 男性上装+下装
         >>> load_clothes_image(sex=0, upper_style_id="male_upper_01", lower_style_id="male_lower_01")
@@ -262,7 +260,12 @@ def load_clothes_image(sex: int, upper_style_id: str = None, lower_style_id: str
         ['data:image/jpeg;base64,...']
     """
     # 获取服装图片根目录
-    clothes_dir = Path(__file__).parent / "pictures" / "clothes"
+    # 图片存放在 utils/pictures/clothes/ 目录下
+    clothes_dir = settings.CLOTHES_DIR or os.getenv("CLOTHES_DIR")
+    if not clothes_dir:
+        clothes_dir = Path(__file__).parent.parent / "utils" / "pictures" / "clothes"
+    else:
+        clothes_dir = Path(clothes_dir)  # 转换为 Path 对象
     
     # 标准化性别参数（支持字符串 "Male"/"Female" 和整数 0/1）
     if sex in ["Male", 0]:

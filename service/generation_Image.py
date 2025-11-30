@@ -30,8 +30,11 @@ class DoubaoImages(LLMModel):
         """
         # 1. 解析参数和处理图片
         try:
+            # 容错处理:将Python的None替换为JSON标准的null
+            data_cleaned = data.replace('None', 'null')
+            
             # 解析 JSON
-            req_dict = json.loads(data)
+            req_dict = json.loads(data_cleaned)
             request_model = CreatePictureRequest(**req_dict)
             
             # 处理图片

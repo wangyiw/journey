@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     LLM_SCENE_ID: Optional[str] = None
     LLM_MODEL_CONFIG_URL: Optional[str] = None
     LLM_MODEL_CONFIG_FILE: Optional[str] = None
+    CLOTHES_DIR: Optional[str] = None
+    SAVED_DIR: Optional[str] = None
 
     LOG_LEVEL: str = "INFO" # "DEBUG" | "INFO"
 
@@ -40,4 +42,5 @@ logger = logging.getLogger(__name__)
 logger.info(f"当前环境ENV 变量->>>>>>>> {ENV} <<<<<<")
 
 logger.info(f"LLM_URL: {settings.LLM_URL}")
+logger.info(f"CLOTHES_DIR: {settings.CLOTHES_DIR}")
 # raise

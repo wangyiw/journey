@@ -250,20 +250,14 @@ async def create_picture_stream(
       {"status": "failed", "message": "错误信息"}
       ```
     """
-    # 1. 解析参数和处理图片
-    try:
-        request_model = await DoubaoImages.verify_input_data(file, data)
-    except Exception as e:
-        logger.error(f"图生图SSE接口异常: {e}")
-        raise ParamException(message="图生图SSE接口异常: " + str(e))
-    
     async def generateImageStream():
         max_retries = 2
         for attempt in range(max_retries):
             try:
                 llm_conf = LLMConf()
                 # service 层已经封装了完整的状态推送（generating/completed/failed）
-                async for chunk in DoubaoImages(llm_conf).create_picture_stream(request_model):
+                # 包括参数校验、图片验证等所有逻辑
+                async for chunk in DoubaoImages(llm_conf).create_picture_stream(file, data):
                     yield chunk
                 return
             except Exception as e:

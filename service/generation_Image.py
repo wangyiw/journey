@@ -24,7 +24,7 @@ class DoubaoImages(LLMModel):
     生图相关方法
     """
     @staticmethod
-    async def verify_input_data(file: UploadFile, data: str) -> CreatePictureRequest:
+    async def validate_input_data(file: UploadFile, data: str) -> CreatePictureRequest:
         """
         校验前端传的json和图片，并返回 CreatePictureRequest 对象
         """
@@ -55,7 +55,7 @@ class DoubaoImages(LLMModel):
             # 这里选择直接抛出 HTTP 异常，由中间件处理
             raise CommonException(message=f"参数解析失败: {str(e)}")
     
-    async def translate_image_type(self,inputImage:bytes)->str:
+    async def translate_image_type(self, input_image: bytes) -> str:
         """
         TODO 转换前端输入的图片类型，暂不实现---后端处理前端传入的图片，转成 JPEG 并压缩
         create_picture_stream 接口一开始，收到 file 后，不要直接 read 后就转 Base64，而是先用 PIL 压缩一下
@@ -65,7 +65,7 @@ class DoubaoImages(LLMModel):
         """
         try:
             # 1. 打开图片
-            img = Image.open(io.BytesIO(inputImage))
+            img = Image.open(io.BytesIO(input_image))
             
             # 2. 兼容性处理：如果是 RGBA (PNG透明底)，转为 RGB
             if img.mode in ('RGBA', 'P'):
@@ -89,11 +89,11 @@ class DoubaoImages(LLMModel):
         except Exception as e:
             logger.warning(f"图片压缩失败，降级使用原始数据: {e}")
             # 兜底：直接转 Base64
-            base64_str = base64.b64encode(inputImage).decode('utf-8')
+            base64_str = base64.b64encode(input_image).decode('utf-8')
             return f"data:image/jpeg;base64,{base64_str}"
     
 
-    def verify_input_image(self, inputImageBase64: str):
+    def verify_input_image(self, input_image_base64: str):
         """
         校验输入图片格式和约束条件
         
@@ -105,88 +105,90 @@ class DoubaoImages(LLMModel):
         - 总像素：不超过 6000×6000 px
         
         Args:
-            inputImageBase64: 输入图片Base64编码
+            input_image_base64: 输入图片Base64编码
             
         Raises:
             CommonException: 图片验证失败时抛出异常
         """
         # 1. 验证 Base64 格式
-        is_valid, format_type = validate_image_format(inputImageBase64)
+        is_valid, format_type = validate_image_format(input_image_base64)
         
         if not is_valid:
             raise CommonException(message="输入图片格式不正确，请提供有效的Base64编码（格式：data:image/<format>;base64,<base64_data>），仅支持 jpeg、png 格式")
         
         # 2. 验证图片约束条件
-        is_valid_constraints, error_message = validate_image_constraints(inputImageBase64)
+        is_valid_constraints, error_message = validate_image_constraints(input_image_base64)
         
         if not is_valid_constraints:
             raise CommonException(message=f"输入图片不符合要求：{error_message}")
         
         return True
     
-    def verify_image_quality(self, outputImageBase64List: List[str]):
+    def verify_image_quality(self, output_image_base64_list: List[str]):
         """
         校验生成图片质量
         
         Args:
-            outputImageBase64List: 生成的图片 Base64 列表
+            output_image_base64_list: 生成的图片 Base64 列表
             
         Returns:
             bool: 校验通过返回 True
         """
         # TODO: 实现图片质量校验逻辑
         # 例如：检查图片是否为空、尺寸是否符合要求等
-        if not outputImageBase64List:
+        if not output_image_base64_list:
             raise CommonException(message="生成的图片列表为空")
         
-        if len(outputImageBase64List) != 4:
-            raise CommonException(message=f"期望生成4张图片，实际生成{len(outputImageBase64List)}张")
+        if len(output_image_base64_list) != 4:
+            raise CommonException(message=f"期望生成4张图片，实际生成{len(output_image_base64_list)}张")
         
         return True
 
 
 
-    async def create_picture(self, ImageStreamRequest: CreatePictureRequest)->CreatePictureResponse:
+    async def create_picture(self, file: UploadFile, data: str)->CreatePictureResponse:
         """
         图生图主逻辑
         """
-        # 1.请求参数校验已经在pytanic中实现了，这里不需要重复校验
+        # 1.请求参数校验已经在pytanic中实现了,但需要校验json/转换str
+        picture_request = await self.validate_input_data(file, data)
+        
         # 2.验证输入图片格式
-        self.verify_input_image(ImageStreamRequest.originPicBase64)
+        self.verify_input_image(picture_request.originPicBase64)
         
         # 3.拼装提示词（使用策略模式）
-        createPicturePrompt = generate_prompt_by_request(ImageStreamRequest)
-        logger.info(f"拼装提示词：{createPicturePrompt}")
+        create_picture_prompt = generate_prompt_by_request(picture_request)
+        logger.info(f"拼装提示词：{create_picture_prompt}")
         
         # 4.准备输入图片列表
         # 图片来源说明：
-        # - 人物原图：前端传入的 Base64（ImageStreamRequest.originPicBase64）
+        # - 人物原图：前端传入的 Base64（picture_request.originPicBase64）
         # - 服装图片：后端根据性别和样式ID从本地文件加载（使用 ClothesLoader）
-        createPictureInputBase64List = []
+        create_picture_input_base64_list = []
         
         # 4.1 添加人物原图（前端传入）
-        createPictureInputBase64List.append(ImageStreamRequest.originPicBase64)
+        create_picture_input_base64_list.append(picture_request.originPicBase64)
         logger.info(f"添加人物原图: 来源=前端上传")
         
         # 4.2 轻松模式：根据性别和样式ID自动加载服装图片（后端本地文件）
-        if ImageStreamRequest.mode == ModeEnum.Easy and ImageStreamRequest.clothes:
+        if picture_request.mode == ModeEnum.Easy and picture_request.clothes:
             try:
                 # 服装图片加载
                 clothes_images = load_clothes_image(
-                    sex=ImageStreamRequest.gender.value,
-                    upper_style_id=ImageStreamRequest.clothes.upperStyle,
-                    lower_style_id=ImageStreamRequest.clothes.lowerStyle,
-                    dress_id=ImageStreamRequest.clothes.dress
+                    sex=picture_request.gender.value,
+                    upper_style_id=picture_request.clothes.upperStyle,
+                    lower_style_id=picture_request.clothes.lowerStyle,
+                    dress_id=picture_request.clothes.dress
                 )
                 
                 # 添加服装图片到输入列表
-                createPictureInputBase64List.extend(clothes_images)
+                create_picture_input_base64_list.extend(clothes_images)
                 
                 # 日志记录
-                if ImageStreamRequest.clothes.dress is not None:
-                    logger.info(f"添加连衣裙: 性别={ImageStreamRequest.gender.name}, 样式ID={ImageStreamRequest.clothes.dress}, 来源=本地文件")
+                if picture_request.clothes.dress is not None:
+                    logger.info(f"添加连衣裙: 性别={picture_request.gender.name}, 样式ID={picture_request.clothes.dress}, 来源=本地文件")
                 else:
-                    logger.info(f"添加服装图片: 性别={ImageStreamRequest.gender.name}, 上装ID={ImageStreamRequest.clothes.upperStyle}, 下装ID={ImageStreamRequest.clothes.lowerStyle}, 来源=本地文件")
+                    logger.info(f"添加服装图片: 性别={picture_request.gender.name}, 上装ID={picture_request.clothes.upperStyle}, 下装ID={picture_request.clothes.lowerStyle}, 来源=本地文件")
                 
             except ValueError as e:
                 logger.error(f"加载服装图片失败: {e}")
@@ -201,54 +203,55 @@ class DoubaoImages(LLMModel):
                     error_code=ErrorCode.RESOURCE_NOT_FOUND
                 )
         
-        logger.info(f"输入图片总数: {len(createPictureInputBase64List)} 张（1张人物 + {len(createPictureInputBase64List)-1}张服装）")
+        logger.info(f"输入图片总数: {len(create_picture_input_base64_list)} 张（1张人物 + {len(create_picture_input_base64_list)-1}张服装）")
         
         # 5.调用火山豆包生图接口（流式生成器）
-        outputImageBase64List = []
-        async for base64_image in self.create_picture_by_seed_ream(createPictureInputBase64List, createPicturePrompt):
+        output_image_base64_list = []
+        async for base64_image in self.create_picture_by_seed_ream(create_picture_input_base64_list, create_picture_prompt):
             # 单张图片质量校验（可选）
             # await self.verifySingleImageQuality(base64_image)
-            outputImageBase64List.append(base64_image)
+            output_image_base64_list.append(base64_image)
         
         # 5.校验生成图片质量（批量校验）
-        self.verify_image_quality(outputImageBase64List)
+        self.verify_image_quality(output_image_base64_list)
 
         # 6.封装dto响应体返回
         images = [
             ImageItem(id=idx, base64=img_base64)
-            for idx, img_base64 in enumerate(outputImageBase64List)
+            for idx, img_base64 in enumerate(output_image_base64_list)
         ]
         
         return CreatePictureResponse(images=images)
     
-    async def create_picture_stream(self, ImageStreamRequest: CreatePictureRequest):
+    async def create_picture_stream(self, file: UploadFile, data: str):
         """
         流式图生图 - 生成器方法，用于 SSE 推送
         每生成一张图片就立即推送，最后发送完成或失败状态
         """
         try:
-
+            # 校验输入的入参转换json
+            picture_request = await self.validate_input_data(file, data)
 
             # 验证输入图片
-            self.verify_input_image(ImageStreamRequest.originPicBase64)
+            self.verify_input_image(picture_request.originPicBase64)
             
             # 生成提示词
-            createPicturePrompt = generate_prompt_by_request(ImageStreamRequest)
-            logger.info(f"流式生成 - 提示词：{createPicturePrompt}")
+            create_picture_prompt = generate_prompt_by_request(picture_request)
+            logger.info(f"流式生成 - 提示词：{create_picture_prompt}")
             
             # 准备输入图片列表
-            createPictureInputBase64List = [ImageStreamRequest.originPicBase64]
+            create_picture_input_base64_list = [picture_request.originPicBase64]
             
             # 轻松模式：加载服装图片
-            if ImageStreamRequest.mode == ModeEnum.Easy and ImageStreamRequest.clothes:
+            if picture_request.mode == ModeEnum.Easy and picture_request.clothes:
                 try:
                     clothes_images = load_clothes_image(
-                        sex=ImageStreamRequest.gender.value,
-                        upper_style_id=ImageStreamRequest.clothes.upperStyle,
-                        lower_style_id=ImageStreamRequest.clothes.lowerStyle,
-                        dress_id=ImageStreamRequest.clothes.dress
+                        sex=picture_request.gender.value,
+                        upper_style_id=picture_request.clothes.upperStyle,
+                        lower_style_id=picture_request.clothes.lowerStyle,
+                        dress_id=picture_request.clothes.dress
                     )
-                    createPictureInputBase64List.extend(clothes_images)
+                    create_picture_input_base64_list.extend(clothes_images)
                 except ValueError as e:
                     logger.error(f"加载服装图片失败: {e}")
                     raise ParamException(message=str(e), error_code=ErrorCode.PARAM_INVALID)
@@ -256,11 +259,11 @@ class DoubaoImages(LLMModel):
                     logger.error(f"服装图片文件不存在: {e}")
                     raise ParamException(message="服装图片文件不存在，请联系管理员", error_code=ErrorCode.RESOURCE_NOT_FOUND)
             
-            logger.info(f"流式生成 - 输入图片总数: {len(createPictureInputBase64List)} 张")
+            logger.info(f"流式生成 - 输入图片总数: {len(create_picture_input_base64_list)} 张")
             
             # 调用底层生成器，逐张推送图片
             image_count = 0
-            async for base64_image in self.create_picture_by_seed_ream(createPictureInputBase64List, createPicturePrompt):
+            async for base64_image in self.create_picture_by_seed_ream(create_picture_input_base64_list, create_picture_prompt):
                 # 封装成功生成的消息
                 resp = ImageStreamEvent(
                     status=StreamStatusEnum.Generating,

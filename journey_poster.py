@@ -19,7 +19,7 @@ from model.createPictureReq import CreatePictureRequest
 from model.createPictureResp import CreatePictureResponse
 from service.generation_Image import DoubaoImages
 from model.createPictureResp import ImageStreamEvent, StreamStatusEnum
-from core.exceptions import CommonException
+from core.exceptions import CommonException, ParamException
 
 # 初始化日志
 logger = logging.getLogger(__name__)
@@ -255,7 +255,7 @@ async def create_picture_stream(
         request_model = await DoubaoImages.verify_input_data(file, data)
     except Exception as e:
         logger.error(f"图生图SSE接口异常: {e}")
-        raise CommonException(message="图生图SSE接口异常: " + str(e))
+        raise ParamException(message="图生图SSE接口异常: " + str(e))
     
     async def generateImageStream():
         max_retries = 2

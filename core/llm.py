@@ -168,7 +168,7 @@ class LLMModel:
 
     async def create_picture_by_seed_ream(self, InputImageList: List[str], SystemPrompt: str):
         """
-        调用豆包生图接口，stream 图生图（使用 OpenAI SDK）
+        调用豆包生图接口，stream 图生图（使用 OpenAI SDK），也是流式生成但是收集成列表返回
         input：
             InputImageList: 输入图片列表（Base64编码）
             SystemPrompt: 系统提示词
